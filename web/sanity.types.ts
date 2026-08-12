@@ -376,7 +376,7 @@ export type AllSanitySchemaTypes =
 
 // Source: ../web/src/sanity/queries.ts
 // Variable: SITE_SETTINGS_QUERY
-// Query: *[_id == "siteSettings"][0]{    name,    title,    about,    profileImage{      asset->{_id, url, metadata{lqip, dimensions{width, height}}},      alt,      hotspot,      crop    },    resumeFile{      asset->{_id, url, originalFilename}    },    socialLinks[]{platform, url},    skillCategories[]{      name,      skills[]{        name,        icon{asset->{_id, url}, alt}      }    },    seo{      title,      description,      ogImage{asset->{_id, url}}    }  }
+// Query: *[_id == "siteSettings"][0]{    name,    title,    about,    profileImage{      asset->{_id, url, metadata{lqip, dimensions{width, height}}},      alt,      hotspot,      crop    },    resumeFile{      asset->{_id, url, originalFilename}    },    socialLinks[]{_key, platform, url},    skillCategories[]{      _key,      name,      skills[]{        _key,        name,        icon{asset->{_id, url}, alt}      }    },    seo{      title,      description,      ogImage{asset->{_id, url}}    }  }
 export type SITE_SETTINGS_QUERY_RESULT =
   | {
       name: null;
@@ -454,12 +454,15 @@ export type SITE_SETTINGS_QUERY_RESULT =
         } | null;
       } | null;
       socialLinks: Array<{
+        _key: string;
         platform: "email" | "github" | "linkedin" | "other" | "twitter" | null;
         url: string | null;
       }> | null;
       skillCategories: Array<{
+        _key: string;
         name: string | null;
         skills: Array<{
+          _key: string;
           name: string | null;
           icon: {
             asset: {
@@ -516,7 +519,7 @@ export type PROJECTS_QUERY_RESULT = Array<{
 
 // Source: ../web/src/sanity/queries.ts
 // Variable: PROJECT_BY_SLUG_QUERY
-// Query: *[_type == "project" && slug.current == $slug][0]{    _id,    title,    "slug": slug.current,    coverImage{      asset->{_id, url, metadata{lqip, dimensions{width, height}}},      alt,      hotspot,      crop    },    gallery[]{      asset->{_id, url, metadata{lqip, dimensions{width, height}}},      alt,      hotspot,      crop    },    summary,    body,    techStack,    repoUrl,    liveUrl  }
+// Query: *[_type == "project" && slug.current == $slug][0]{    _id,    title,    "slug": slug.current,    coverImage{      asset->{_id, url, metadata{lqip, dimensions{width, height}}},      alt,      hotspot,      crop    },    gallery[]{      _key,      asset->{_id, url, metadata{lqip, dimensions{width, height}}},      alt,      hotspot,      crop    },    summary,    body,    techStack,    repoUrl,    liveUrl  }
 export type PROJECT_BY_SLUG_QUERY_RESULT = {
   _id: string;
   title: string | null;
@@ -538,6 +541,7 @@ export type PROJECT_BY_SLUG_QUERY_RESULT = {
     crop: SanityImageCrop | null;
   } | null;
   gallery: Array<{
+    _key: string;
     asset: {
       _id: string;
       url: string | null;
@@ -635,9 +639,9 @@ export type EXPERIENCE_QUERY_RESULT = Array<{
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
-    '\n  *[_id == "siteSettings"][0]{\n    name,\n    title,\n    about,\n    profileImage{\n      asset->{_id, url, metadata{lqip, dimensions{width, height}}},\n      alt,\n      hotspot,\n      crop\n    },\n    resumeFile{\n      asset->{_id, url, originalFilename}\n    },\n    socialLinks[]{platform, url},\n    skillCategories[]{\n      name,\n      skills[]{\n        name,\n        icon{asset->{_id, url}, alt}\n      }\n    },\n    seo{\n      title,\n      description,\n      ogImage{asset->{_id, url}}\n    }\n  }\n': SITE_SETTINGS_QUERY_RESULT;
+    '\n  *[_id == "siteSettings"][0]{\n    name,\n    title,\n    about,\n    profileImage{\n      asset->{_id, url, metadata{lqip, dimensions{width, height}}},\n      alt,\n      hotspot,\n      crop\n    },\n    resumeFile{\n      asset->{_id, url, originalFilename}\n    },\n    socialLinks[]{_key, platform, url},\n    skillCategories[]{\n      _key,\n      name,\n      skills[]{\n        _key,\n        name,\n        icon{asset->{_id, url}, alt}\n      }\n    },\n    seo{\n      title,\n      description,\n      ogImage{asset->{_id, url}}\n    }\n  }\n': SITE_SETTINGS_QUERY_RESULT;
     '\n  *[_type == "project"] | order(featured desc, order asc, _createdAt desc){\n    _id,\n    title,\n    "slug": slug.current,\n    coverImage{\n      asset->{_id, url, metadata{lqip, dimensions{width, height}}},\n      alt,\n      hotspot,\n      crop\n    },\n    summary,\n    techStack,\n    repoUrl,\n    liveUrl,\n    featured,\n    "hasCaseStudy": defined(body) && length(body) > 0\n  }\n': PROJECTS_QUERY_RESULT;
-    '\n  *[_type == "project" && slug.current == $slug][0]{\n    _id,\n    title,\n    "slug": slug.current,\n    coverImage{\n      asset->{_id, url, metadata{lqip, dimensions{width, height}}},\n      alt,\n      hotspot,\n      crop\n    },\n    gallery[]{\n      asset->{_id, url, metadata{lqip, dimensions{width, height}}},\n      alt,\n      hotspot,\n      crop\n    },\n    summary,\n    body,\n    techStack,\n    repoUrl,\n    liveUrl\n  }\n': PROJECT_BY_SLUG_QUERY_RESULT;
+    '\n  *[_type == "project" && slug.current == $slug][0]{\n    _id,\n    title,\n    "slug": slug.current,\n    coverImage{\n      asset->{_id, url, metadata{lqip, dimensions{width, height}}},\n      alt,\n      hotspot,\n      crop\n    },\n    gallery[]{\n      _key,\n      asset->{_id, url, metadata{lqip, dimensions{width, height}}},\n      alt,\n      hotspot,\n      crop\n    },\n    summary,\n    body,\n    techStack,\n    repoUrl,\n    liveUrl\n  }\n': PROJECT_BY_SLUG_QUERY_RESULT;
     '\n  *[_type == "project" && defined(slug.current)]{"slug": slug.current}\n': PROJECT_SLUGS_QUERY_RESULT;
     '\n  *[_type == "experience"] | order(startDate desc, order asc){\n    _id,\n    role,\n    organization,\n    logo{asset->{_id, url}},\n    type,\n    startDate,\n    endDate,\n    description\n  }\n': EXPERIENCE_QUERY_RESULT;
   }

@@ -14,10 +14,12 @@ export const SITE_SETTINGS_QUERY = defineQuery(`
     resumeFile{
       asset->{_id, url, originalFilename}
     },
-    socialLinks[]{platform, url},
+    socialLinks[]{_key, platform, url},
     skillCategories[]{
+      _key,
       name,
       skills[]{
+        _key,
         name,
         icon{asset->{_id, url}, alt}
       }
@@ -62,6 +64,7 @@ export const PROJECT_BY_SLUG_QUERY = defineQuery(`
       crop
     },
     gallery[]{
+      _key,
       asset->{_id, url, metadata{lqip, dimensions{width, height}}},
       alt,
       hotspot,
