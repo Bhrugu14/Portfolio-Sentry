@@ -18,6 +18,7 @@
 - Schemas use `defineType`/`defineField`/`defineArrayMember` throughout; every document/object gets an icon from `@sanity/icons/<Name>` (subpath imports only).
 - Ordinary documents (`project`, `experience`, `contactSubmission`) get Sanity-generated `_id`s. `siteSettings` is the one singleton with a fixed `_id`, enforced via Studio Structure (not a schema option).
 - Visual Editing overlay / Presentation tool config is out of scope for this plan (spec's testing plan doesn't exercise it); `defineLive` is wired up so it can be added later without restructuring.
+- GROQ array projections always select `_key` (e.g. `skillCategories[]{_key, ...}`) — array items need a stable React key, and Sanity doesn't include `_key` in a projection unless it's explicitly listed.
 - Out of scope per spec: blog, testimonials, workspace tooling (Turborepo/pnpm workspaces), custom domain, i18n.
 
 ---
@@ -1060,10 +1061,12 @@ export const SITE_SETTINGS_QUERY = defineQuery(`
     resumeFile{
       asset->{_id, url, originalFilename}
     },
-    socialLinks[]{platform, url},
+    socialLinks[]{_key, platform, url},
     skillCategories[]{
+      _key,
       name,
       skills[]{
+        _key,
         name,
         icon{asset->{_id, url}, alt}
       }
@@ -1108,6 +1111,7 @@ export const PROJECT_BY_SLUG_QUERY = defineQuery(`
       crop
     },
     gallery[]{
+      _key,
       asset->{_id, url, metadata{lqip, dimensions{width, height}}},
       alt,
       hotspot,
