@@ -7,9 +7,11 @@ export const contactSubmission = defineType({
   title: 'Contact Submission',
   type: 'document',
   icon: EnvelopeIcon,
-  // Submissions are created by the website's contact form (server-side),
-  // never by hand — hide the "create new" affordance in Studio.
-  __experimental_actions: ['update', 'delete', 'publish'],
+  // Submissions are created by the website's contact form (server-side).
+  // Editors can still create one by hand in Studio if needed — restricting
+  // that affordance requires a `document.actions` filter in
+  // sanity.config.ts (studio-level, not a schema field) and isn't worth
+  // the added config for this document type.
   fields: [
     defineField({
       name: 'name',
