@@ -1,16 +1,6 @@
-export const projectId = assertValue(
-  process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-  'Missing environment variable: NEXT_PUBLIC_SANITY_PROJECT_ID'
-)
+import { env } from '@/lib/env'
 
-export const dataset = assertValue(
-  process.env.NEXT_PUBLIC_SANITY_DATASET,
-  'Missing environment variable: NEXT_PUBLIC_SANITY_DATASET'
-)
+export const projectId = env.sanityProjectId
+export const dataset = env.sanityDataset
 
 export const apiVersion = '2026-08-10'
-
-function assertValue<T>(v: T | undefined, errorMessage: string): T {
-  if (v === undefined) throw new Error(errorMessage)
-  return v
-}

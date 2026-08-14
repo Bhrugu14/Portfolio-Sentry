@@ -1,0 +1,15 @@
+node_modules
+.next
+out
+build
+coverage
+
+# Secrets: env vars are injected at container run time (docker-compose
+# env_file / build.args), never baked into the image via COPY.
+.env*
+
+.git
+.gitignore
+*.md
+.DS_Store
+npm-debug.log*

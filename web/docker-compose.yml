@@ -1,0 +1,35 @@
+services:
+  # Production image. Default service — `docker compose up` runs this one.
+  #   docker compose --env-file .env.local up --build
+  app:
+    build:
+      context: .
+      target: runner
+      args:
+        # Inlined into the client bundle at build time — see Dockerfile.
+        NEXT_PUBLIC_SANITY_PROJECT_ID: ${NEXT_PUBLIC_SANITY_PROJECT_ID}
+        NEXT_PUBLIC_SANITY_DATASET: ${NEXT_PUBLIC_SANITY_DATASET}
+        NEXT_PUBLIC_GA_MEASUREMENT_ID: ${NEXT_PUBLIC_GA_MEASUREMENT_ID}
+    env_file:
+      - .env.local
+    ports:
+      - '3000:3000'
+
+  # Local dev with hot reload. Opt in with the `dev` profile:
+  #   docker compose --env-file .env.local --profile dev up app-dev
+  app-dev:
+    build:
+      context: .
+      target: dev
+    env_file:
+      - .env.local
+    ports:
+      - '3000:3000'
+    volumes:
+      - .:/app
+      # Anonymous volumes so the container's own installs/build cache aren't
+      # shadowed by the bind mount above (host has neither, in general).
+      - /app/node_modules
+      - /app/.next
+    profiles:
+      - dev

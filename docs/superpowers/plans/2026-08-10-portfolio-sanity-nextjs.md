@@ -969,16 +969,26 @@ npm install server-only
 
 ```typescript
 // web/src/sanity/image.ts
-import createImageUrlBuilder from '@sanity/image-url'
-import type { Image } from 'sanity'
+import { createImageUrlBuilder } from '@sanity/image-url'
+import type { SanityImageSource } from '@sanity/image-url'
 import { dataset, projectId } from './env'
 
 const builder = createImageUrlBuilder({ projectId, dataset })
 
-export function urlFor(source: Image) {
+export function urlFor(source: SanityImageSource) {
   return builder.image(source)
 }
 ```
+
+Uses the named `createImageUrlBuilder` export, not the default export — the
+default export is deprecated in current `@sanity/image-url` releases and
+prints a build-time warning.
+
+`SanityImageSource` (from `@sanity/image-url` itself) is the correct
+parameter type here — the Studio-side `Image` type from the `sanity`
+package is too strict for values coming back from GROQ queries (e.g. a
+dereferenced `asset->{...}` result), and using it causes a real `tsc`
+error once a query result is passed through `urlFor`.
 
 - [ ] **Step 6: Create the Live Content API setup**
 
@@ -1080,7 +1090,7 @@ export const SITE_SETTINGS_QUERY = defineQuery(`
 `)
 
 export const PROJECTS_QUERY = defineQuery(`
-  *[_type == "project"] | order(featured desc, order asc, _createdAt desc){
+  *[_type == "project" && defined(slug.current)] | order(featured desc, order asc, _createdAt desc){
     _id,
     title,
     "slug": slug.current,
@@ -1723,10 +1733,38 @@ git commit -m "Wire fonts, theme, GA4, and Sanity Live into the root layout"
 - Create: `web/src/components/ui/sanity-image.tsx`
 - Create: `web/src/components/sections/hero.tsx`
 - Create: `web/src/components/sections/about.tsx`
+- Modify: `web/next.config.ts`
 
 **Interfaces:**
 - Consumes: `SITE_SETTINGS_QUERY` result shape (`name`, `title`, `about`, `profileImage`, `resumeFile`) from Task 11; `urlFor` (Task 10); `ResumeDownloadLink` (Task 14).
 - Produces: `<SanityImage>` (generic image renderer reused by every section with images: Skills, Projects, Experience); `<Hero settings={...} />` and `<About settings={...} />`, both consumed by the home page (Task 22).
+
+- [ ] **Step 0: Allow-list Sanity's image CDN for `next/image`**
+
+`next/image` refuses to optimize images from a host it doesn't know about —
+every `SanityImage` render (this task onward) needs `cdn.sanity.io`
+allow-listed, or the page throws `Invalid src prop ... hostname
+"cdn.sanity.io" is not configured`. Read the existing `web/next.config.ts`
+first, then add the `images` option alongside anything already there:
+
+```typescript
+// web/next.config.ts
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'cdn.sanity.io',
+        pathname: '/images/**',
+      },
+    ],
+  },
+};
+
+export default nextConfig;
+```
 
 - [ ] **Step 1: Install Framer Motion and the Portable Text renderer**
 
@@ -1744,8 +1782,14 @@ import Image from 'next/image'
 import { urlFor } from '@/sanity/image'
 
 type SanityImageValue = {
-  asset?: { _id: string; url: string; metadata?: { lqip?: string; dimensions?: { width: number; height: number } } }
-  alt?: string
+  asset?:
+    | {
+        _id: string
+        url?: string | null
+        metadata?: { lqip?: string | null; dimensions?: { width: number | null; height: number | null } | null } | null
+      }
+    | null
+  alt?: string | null
   hotspot?: unknown
   crop?: unknown
 }
@@ -1779,7 +1823,7 @@ export function SanityImage({
       priority={priority}
       sizes={sizes}
       placeholder={value.asset.metadata?.lqip ? 'blur' : 'empty'}
-      blurDataURL={value.asset.metadata?.lqip}
+      blurDataURL={value.asset.metadata?.lqip ?? undefined}
     />
   )
 }
@@ -1794,9 +1838,9 @@ export function SanityImage({
 import { motion } from 'framer-motion'
 import { SanityImage } from '@/components/ui/sanity-image'
 import { ResumeDownloadLink } from '@/components/analytics/resume-download-link'
-import type { SITE_SETTINGS_QUERYResult } from '../../../sanity.types'
+import type { SITE_SETTINGS_QUERY_RESULT } from '../../../sanity.types'
 
-export function Hero({ settings }: { settings: NonNullable<SITE_SETTINGS_QUERYResult> }) {
+export function Hero({ settings }: { settings: NonNullable<SITE_SETTINGS_QUERY_RESULT> }) {
   const resumeUrl = settings.resumeFile?.asset?.url
   const resumeFileName = settings.resumeFile?.asset?.originalFilename || 'resume.pdf'
 
@@ -1859,9 +1903,9 @@ export function Hero({ settings }: { settings: NonNullable<SITE_SETTINGS_QUERYRe
 
 import { motion } from 'framer-motion'
 import { PortableText } from 'next-sanity'
-import type { SITE_SETTINGS_QUERYResult } from '../../../sanity.types'
+import type { SITE_SETTINGS_QUERY_RESULT } from '../../../sanity.types'
 
-export function About({ settings }: { settings: NonNullable<SITE_SETTINGS_QUERYResult> }) {
+export function About({ settings }: { settings: NonNullable<SITE_SETTINGS_QUERY_RESULT> }) {
   if (!settings.about) return null
 
   return (
@@ -1884,7 +1928,7 @@ export function About({ settings }: { settings: NonNullable<SITE_SETTINGS_QUERYR
 
 - [ ] **Step 5: Verify it compiles**
 
-Type generation from Task 11 must have run before this compiles cleanly (it produces `sanity.types.ts`). If `SITE_SETTINGS_QUERYResult` isn't found, re-run `npm run typegen` from `studio/`.
+Type generation from Task 11 must have run before this compiles cleanly (it produces `sanity.types.ts`). If `SITE_SETTINGS_QUERY_RESULT` isn't found, re-run `npm run typegen` from `studio/`.
 
 ```bash
 cd web && npx tsc --noEmit
@@ -1908,7 +1952,7 @@ git commit -m "Add Hero and About sections"
 - Create: `web/src/components/sections/skills.tsx`
 
 **Interfaces:**
-- Consumes: `settings.skillCategories[]` from `SITE_SETTINGS_QUERYResult` (Task 11); `SanityImage` (Task 16).
+- Consumes: `settings.skillCategories[]` from `SITE_SETTINGS_QUERY_RESULT` (Task 11); `SanityImage` (Task 16).
 - Produces: `<Skills settings={...} />`, consumed by the home page (Task 22).
 
 - [ ] **Step 1: Create the Skills section**
@@ -1919,9 +1963,9 @@ git commit -m "Add Hero and About sections"
 
 import { motion } from 'framer-motion'
 import { SanityImage } from '@/components/ui/sanity-image'
-import type { SITE_SETTINGS_QUERYResult } from '../../../sanity.types'
+import type { SITE_SETTINGS_QUERY_RESULT } from '../../../sanity.types'
 
-export function Skills({ settings }: { settings: NonNullable<SITE_SETTINGS_QUERYResult> }) {
+export function Skills({ settings }: { settings: NonNullable<SITE_SETTINGS_QUERY_RESULT> }) {
   const categories = settings.skillCategories ?? []
   if (categories.length === 0) return null
 
@@ -1994,9 +2038,9 @@ git commit -m "Add Skills section"
 // web/src/components/sections/project-card.tsx
 import Link from 'next/link'
 import { SanityImage } from '@/components/ui/sanity-image'
-import type { PROJECTS_QUERYResult } from '../../../sanity.types'
+import type { PROJECTS_QUERY_RESULT } from '../../../sanity.types'
 
-export function ProjectCard({ project }: { project: PROJECTS_QUERYResult[number] }) {
+export function ProjectCard({ project }: { project: PROJECTS_QUERY_RESULT[number] }) {
   const primaryHref = project.hasCaseStudy
     ? `/projects/${project.slug}`
     : project.liveUrl || project.repoUrl || '#'
@@ -2052,9 +2096,9 @@ export function ProjectCard({ project }: { project: PROJECTS_QUERYResult[number]
 ```typescript
 // web/src/components/sections/projects.tsx
 import { ProjectCard } from './project-card'
-import type { PROJECTS_QUERYResult } from '../../../sanity.types'
+import type { PROJECTS_QUERY_RESULT } from '../../../sanity.types'
 
-export function Projects({ projects }: { projects: PROJECTS_QUERYResult }) {
+export function Projects({ projects }: { projects: PROJECTS_QUERY_RESULT }) {
   if (projects.length === 0) return null
 
   return (
@@ -2181,6 +2225,10 @@ describe('formatDateRange', () => {
   it('formats an open-ended range as Present', () => {
     expect(formatDateRange('2023-10-01', null)).toBe('Oct 2023 — Present')
   })
+
+  it('formats a missing start date as Unknown', () => {
+    expect(formatDateRange(null, '2023-09-01')).toBe('Unknown — Sep 2023')
+  })
 })
 ```
 
@@ -2198,8 +2246,8 @@ Expected: FAIL — module not found.
 // web/src/lib/format-date-range.ts
 const formatter = new Intl.DateTimeFormat('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' })
 
-export function formatDateRange(startDate: string, endDate: string | null): string {
-  const start = formatter.format(new Date(startDate))
+export function formatDateRange(startDate: string | null, endDate: string | null): string {
+  const start = startDate ? formatter.format(new Date(startDate)) : 'Unknown'
   const end = endDate ? formatter.format(new Date(endDate)) : 'Present'
   return `${start} — ${end}`
 }
@@ -2223,9 +2271,9 @@ import { motion } from 'framer-motion'
 import { PortableText } from 'next-sanity'
 import { SanityImage } from '@/components/ui/sanity-image'
 import { formatDateRange } from '@/lib/format-date-range'
-import type { EXPERIENCE_QUERYResult } from '../../../sanity.types'
+import type { EXPERIENCE_QUERY_RESULT } from '../../../sanity.types'
 
-export function Experience({ items }: { items: EXPERIENCE_QUERYResult }) {
+export function Experience({ items }: { items: EXPERIENCE_QUERY_RESULT }) {
   if (items.length === 0) return null
 
   return (
@@ -2298,7 +2346,7 @@ git commit -m "Add Experience timeline section"
 'use client'
 
 import { useState, type FormEvent } from 'react'
-import type { SITE_SETTINGS_QUERYResult } from '../../../sanity.types'
+import type { SITE_SETTINGS_QUERY_RESULT } from '../../../sanity.types'
 
 type Status = 'idle' | 'submitting' | 'success' | 'error'
 
@@ -2310,7 +2358,7 @@ const SOCIAL_LABELS: Record<string, string> = {
   other: 'Link',
 }
 
-export function Contact({ settings }: { settings: NonNullable<SITE_SETTINGS_QUERYResult> }) {
+export function Contact({ settings }: { settings: NonNullable<SITE_SETTINGS_QUERY_RESULT> }) {
   const [status, setStatus] = useState<Status>('idle')
   const [errors, setErrors] = useState<Record<string, string>>({})
 
@@ -2415,8 +2463,8 @@ export function Contact({ settings }: { settings: NonNullable<SITE_SETTINGS_QUER
       {settings.socialLinks && settings.socialLinks.length > 0 && (
         <ul className="mt-10 flex flex-wrap gap-4 text-sm">
           {settings.socialLinks.map((link) => (
-            <li key={link.url}>
-              <a href={link.url} target="_blank" rel="noopener noreferrer" className="text-muted hover:text-accent">
+            <li key={link._key}>
+              <a href={link.url ?? undefined} target="_blank" rel="noopener noreferrer" className="text-muted hover:text-accent">
                 {SOCIAL_LABELS[link.platform ?? 'other'] ?? link.platform}
               </a>
             </li>
@@ -2475,7 +2523,15 @@ import { writeClient } from '@/sanity/write-client'
 export async function POST(request: Request) {
   let body: Partial<ContactFormInput>
   try {
-    body = await request.json()
+    const parsed: unknown = await request.json()
+    // A syntactically valid JSON body can still be `null`, a number, or an
+    // array — request.json() won't throw for those, but treating them as
+    // ContactFormInput below would throw on `body.name`. Reject anything
+    // that isn't a plain object up front.
+    if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
+      throw new Error('Body must be a JSON object')
+    }
+    body = parsed as Partial<ContactFormInput>
   } catch {
     return NextResponse.json({ ok: false, errors: { form: 'Invalid request body' } }, { status: 400 })
   }
@@ -2613,7 +2669,7 @@ export function Nav() {
 
 ```typescript
 // web/src/components/sections/footer.tsx
-export function Footer({ name }: { name: string }) {
+export function Footer({ name }: { name: string | null }) {
   return (
     <footer className="border-t border-border px-6 py-8 text-center text-sm text-muted">
       © {new Date().getFullYear()} {name}. Built with Next.js and Sanity.
@@ -2640,9 +2696,9 @@ import { Footer } from '@/components/sections/footer'
 
 export default async function Home() {
   const [{ data: settings }, { data: projects }, { data: experience }] = await Promise.all([
-    sanityFetch({ query: SITE_SETTINGS_QUERY }),
-    sanityFetch({ query: PROJECTS_QUERY }),
-    sanityFetch({ query: EXPERIENCE_QUERY }),
+    sanityFetch({ query: SITE_SETTINGS_QUERY, stega: false }),
+    sanityFetch({ query: PROJECTS_QUERY, stega: false }),
+    sanityFetch({ query: EXPERIENCE_QUERY, stega: false }),
   ])
 
   if (!settings) return notFound()
@@ -2665,6 +2721,8 @@ export default async function Home() {
 ```
 
 `settings` returning `null` (no `siteSettings` document published yet) triggers `notFound()` rather than rendering a broken page — Task 23 publishes the singleton before the smoke test.
+
+`stega: false` on all three fetches: stega-encoding (invisible click-to-edit markers) only matters for the Visual Editing / Presentation Tool overlay, which this plan doesn't wire up (see Global Constraints). Without it, section components would receive strings carrying invisible characters that don't match their plain-`string` prop types.
 
 - [ ] **Step 4: Delete unused scaffold assets**
 

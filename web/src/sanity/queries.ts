@@ -33,7 +33,7 @@ export const SITE_SETTINGS_QUERY = defineQuery(`
 `)
 
 export const PROJECTS_QUERY = defineQuery(`
-  *[_type == "project"] | order(featured desc, order asc, _createdAt desc){
+  *[_type == "project" && defined(slug.current)] | order(featured desc, order asc, _createdAt desc){
     _id,
     title,
     "slug": slug.current,

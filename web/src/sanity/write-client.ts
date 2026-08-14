@@ -1,5 +1,6 @@
 import 'server-only'
 import { createClient } from 'next-sanity'
+import { env } from '@/lib/env'
 import { apiVersion, dataset, projectId } from './env'
 
 // Used only from server-only route handlers (e.g. api/contact) to create
@@ -9,5 +10,5 @@ export const writeClient = createClient({
   dataset,
   apiVersion,
   useCdn: false,
-  token: process.env.SANITY_API_WRITE_TOKEN,
+  token: env.sanityWriteToken,
 })
