@@ -40,6 +40,11 @@
 
 html {
   color-scheme: light dark;
+  scroll-behavior: smooth;
+  /* Offsets every anchor-scroll target (nav clicks, direct #hash links) so
+     it lands below the sticky header instead of underneath it. Applied here
+     once rather than per-section so new sections get it automatically. */
+  scroll-padding-top: 5rem;
 }
 
 body {
