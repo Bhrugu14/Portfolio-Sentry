@@ -115,31 +115,35 @@ export type Project = {
     _key: string;
   }>;
   summary?: string;
-  body?: Array<{
-    children?: Array<{
-      marks?: Array<string>;
-      text?: string;
-      _type: "span";
-      _key: string;
-    }>;
-    style?: "normal" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "blockquote";
-    listItem?: "bullet" | "number";
-    markDefs?: Array<{
-      href?: string;
-      _type: "link";
-      _key: string;
-    }>;
-    level?: number;
-    _type: "block";
-    _key: string;
-  } | {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    _type: "image";
-    _key: string;
-  }>;
+  body?: Array<
+    | {
+        children?: Array<{
+          marks?: Array<string>;
+          text?: string;
+          _type: "span";
+          _key: string;
+        }>;
+        style?:
+          "normal" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "blockquote";
+        listItem?: "bullet" | "number";
+        markDefs?: Array<{
+          href?: string;
+          _type: "link";
+          _key: string;
+        }>;
+        level?: number;
+        _type: "block";
+        _key: string;
+      }
+    | {
+        asset?: SanityImageAssetReference;
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        _type: "image";
+        _key: string;
+      }
+  >;
   techStack?: Array<string>;
   repoUrl?: string;
   liveUrl?: string;
@@ -199,12 +203,16 @@ export type SiteSettings = {
     media?: unknown;
     _type: "file";
   };
-  socialLinks?: Array<{
-    _key: string;
-  } & SocialLink>;
-  skillCategories?: Array<{
-    _key: string;
-  } & SkillCategory>;
+  socialLinks?: Array<
+    {
+      _key: string;
+    } & SocialLink
+  >;
+  skillCategories?: Array<
+    {
+      _key: string;
+    } & SkillCategory
+  >;
   seo?: {
     title?: string;
     description?: string;
@@ -221,9 +229,11 @@ export type SiteSettings = {
 export type SkillCategory = {
   _type: "skillCategory";
   name?: string;
-  skills?: Array<{
-    _key: string;
-  } & Skill>;
+  skills?: Array<
+    {
+      _key: string;
+    } & Skill
+  >;
 };
 
 export type Skill = {
@@ -342,113 +352,139 @@ export type Geopoint = {
   alt?: number;
 };
 
-export type AllSanitySchemaTypes = ContactSubmission | SanityImageAssetReference | Experience | SanityImageCrop | SanityImageHotspot | Project | Slug | SanityFileAssetReference | SiteSettings | SkillCategory | Skill | SocialLink | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageMetadata | SanityFileAsset | SanityAssetSourceData | SanityImageAsset | Geopoint;
+export type AllSanitySchemaTypes =
+  | ContactSubmission
+  | SanityImageAssetReference
+  | Experience
+  | SanityImageCrop
+  | SanityImageHotspot
+  | Project
+  | Slug
+  | SanityFileAssetReference
+  | SiteSettings
+  | SkillCategory
+  | Skill
+  | SocialLink
+  | SanityImagePaletteSwatch
+  | SanityImagePalette
+  | SanityImageDimensions
+  | SanityImageMetadata
+  | SanityFileAsset
+  | SanityAssetSourceData
+  | SanityImageAsset
+  | Geopoint;
 
 // Source: ../web/src/sanity/queries.ts
 // Variable: SITE_SETTINGS_QUERY
 // Query: *[_id == "siteSettings"][0]{    name,    title,    about,    profileImage{      asset->{_id, url, metadata{lqip, dimensions{width, height}}},      alt,      hotspot,      crop    },    resumeFile{      asset->{_id, url, originalFilename}    },    socialLinks[]{_key, platform, url},    skillCategories[]{      _key,      name,      skills[]{        _key,        name,        icon{asset->{_id, url}, alt}      }    },    seo{      title,      description,      ogImage{asset->{_id, url}}    }  }
-export type SITE_SETTINGS_QUERY_RESULT = {
-  name: null;
-  title: null;
-  about: null;
-  profileImage: null;
-  resumeFile: null;
-  socialLinks: null;
-  skillCategories: null;
-  seo: null;
-} | {
-  name: null;
-  title: string | null;
-  about: null;
-  profileImage: null;
-  resumeFile: null;
-  socialLinks: null;
-  skillCategories: null;
-  seo: null;
-} | {
-  name: string | null;
-  title: null;
-  about: null;
-  profileImage: null;
-  resumeFile: null;
-  socialLinks: null;
-  skillCategories: null;
-  seo: null;
-} | {
-  name: string | null;
-  title: string | null;
-  about: Array<{
-    children?: Array<{
-      marks?: Array<string>;
-      text?: string;
-      _type: "span";
-      _key: string;
-    }>;
-    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
-    listItem?: "bullet" | "number";
-    markDefs?: Array<{
-      href?: string;
-      _type: "link";
-      _key: string;
-    }>;
-    level?: number;
-    _type: "block";
-    _key: string;
-  }> | null;
-  profileImage: {
-    asset: {
-      _id: string;
-      url: string | null;
-      metadata: {
-        lqip: string | null;
-        dimensions: {
-          width: number | null;
-          height: number | null;
-        } | null;
-      } | null;
-    } | null;
-    alt: string | null;
-    hotspot: SanityImageHotspot | null;
-    crop: SanityImageCrop | null;
-  } | null;
-  resumeFile: {
-    asset: {
-      _id: string;
-      url: string | null;
-      originalFilename: string | null;
-    } | null;
-  } | null;
-  socialLinks: Array<{
-    _key: string;
-    platform: "email" | "github" | "linkedin" | "other" | "twitter" | null;
-    url: string | null;
-  }> | null;
-  skillCategories: Array<{
-    _key: string;
-    name: string | null;
-    skills: Array<{
-      _key: string;
+export type SITE_SETTINGS_QUERY_RESULT =
+  | {
+      name: null;
+      title: null;
+      about: null;
+      profileImage: null;
+      resumeFile: null;
+      socialLinks: null;
+      skillCategories: null;
+      seo: null;
+    }
+  | {
+      name: null;
+      title: string | null;
+      about: null;
+      profileImage: null;
+      resumeFile: null;
+      socialLinks: null;
+      skillCategories: null;
+      seo: null;
+    }
+  | {
       name: string | null;
-      icon: {
+      title: null;
+      about: null;
+      profileImage: null;
+      resumeFile: null;
+      socialLinks: null;
+      skillCategories: null;
+      seo: null;
+    }
+  | {
+      name: string | null;
+      title: string | null;
+      about: Array<{
+        children?: Array<{
+          marks?: Array<string>;
+          text?: string;
+          _type: "span";
+          _key: string;
+        }>;
+        style?:
+          "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+        listItem?: "bullet" | "number";
+        markDefs?: Array<{
+          href?: string;
+          _type: "link";
+          _key: string;
+        }>;
+        level?: number;
+        _type: "block";
+        _key: string;
+      }> | null;
+      profileImage: {
         asset: {
           _id: string;
           url: string | null;
+          metadata: {
+            lqip: string | null;
+            dimensions: {
+              width: number | null;
+              height: number | null;
+            } | null;
+          } | null;
         } | null;
         alt: string | null;
+        hotspot: SanityImageHotspot | null;
+        crop: SanityImageCrop | null;
       } | null;
-    }> | null;
-  }> | null;
-  seo: {
-    title: string | null;
-    description: string | null;
-    ogImage: {
-      asset: {
-        _id: string;
+      resumeFile: {
+        asset: {
+          _id: string;
+          url: string | null;
+          originalFilename: string | null;
+        } | null;
+      } | null;
+      socialLinks: Array<{
+        _key: string;
+        platform: "email" | "github" | "linkedin" | "other" | "twitter" | null;
         url: string | null;
+      }> | null;
+      skillCategories: Array<{
+        _key: string;
+        name: string | null;
+        skills: Array<{
+          _key: string;
+          name: string | null;
+          icon: {
+            asset: {
+              _id: string;
+              url: string | null;
+            } | null;
+            alt: string | null;
+          } | null;
+        }> | null;
+      }> | null;
+      seo: {
+        title: string | null;
+        description: string | null;
+        ogImage: {
+          asset: {
+            _id: string;
+            url: string | null;
+          } | null;
+        } | null;
       } | null;
-    } | null;
-  } | null;
-} | null;
+    }
+  | null;
 
 // Source: ../web/src/sanity/queries.ts
 // Variable: PROJECTS_QUERY
@@ -522,31 +558,35 @@ export type PROJECT_BY_SLUG_QUERY_RESULT = {
     crop: SanityImageCrop | null;
   }> | null;
   summary: string | null;
-  body: Array<{
-    children?: Array<{
-      marks?: Array<string>;
-      text?: string;
-      _type: "span";
-      _key: string;
-    }>;
-    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
-    listItem?: "bullet" | "number";
-    markDefs?: Array<{
-      href?: string;
-      _type: "link";
-      _key: string;
-    }>;
-    level?: number;
-    _type: "block";
-    _key: string;
-  } | {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    _type: "image";
-    _key: string;
-  }> | null;
+  body: Array<
+    | {
+        children?: Array<{
+          marks?: Array<string>;
+          text?: string;
+          _type: "span";
+          _key: string;
+        }>;
+        style?:
+          "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+        listItem?: "bullet" | "number";
+        markDefs?: Array<{
+          href?: string;
+          _type: "link";
+          _key: string;
+        }>;
+        level?: number;
+        _type: "block";
+        _key: string;
+      }
+    | {
+        asset?: SanityImageAssetReference;
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        _type: "image";
+        _key: string;
+      }
+  > | null;
   techStack: Array<string> | null;
   repoUrl: string | null;
   liveUrl: string | null;
@@ -599,11 +639,10 @@ export type EXPERIENCE_QUERY_RESULT = Array<{
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
-    "\n  *[_id == \"siteSettings\"][0]{\n    name,\n    title,\n    about,\n    profileImage{\n      asset->{_id, url, metadata{lqip, dimensions{width, height}}},\n      alt,\n      hotspot,\n      crop\n    },\n    resumeFile{\n      asset->{_id, url, originalFilename}\n    },\n    socialLinks[]{_key, platform, url},\n    skillCategories[]{\n      _key,\n      name,\n      skills[]{\n        _key,\n        name,\n        icon{asset->{_id, url}, alt}\n      }\n    },\n    seo{\n      title,\n      description,\n      ogImage{asset->{_id, url}}\n    }\n  }\n": SITE_SETTINGS_QUERY_RESULT;
-    "\n  *[_type == \"project\" && defined(slug.current)] | order(featured desc, order asc, _createdAt desc){\n    _id,\n    title,\n    \"slug\": slug.current,\n    coverImage{\n      asset->{_id, url, metadata{lqip, dimensions{width, height}}},\n      alt,\n      hotspot,\n      crop\n    },\n    summary,\n    techStack,\n    repoUrl,\n    liveUrl,\n    featured,\n    \"hasCaseStudy\": defined(body) && length(body) > 0\n  }\n": PROJECTS_QUERY_RESULT;
-    "\n  *[_type == \"project\" && slug.current == $slug][0]{\n    _id,\n    title,\n    \"slug\": slug.current,\n    coverImage{\n      asset->{_id, url, metadata{lqip, dimensions{width, height}}},\n      alt,\n      hotspot,\n      crop\n    },\n    gallery[]{\n      _key,\n      asset->{_id, url, metadata{lqip, dimensions{width, height}}},\n      alt,\n      hotspot,\n      crop\n    },\n    summary,\n    body,\n    techStack,\n    repoUrl,\n    liveUrl\n  }\n": PROJECT_BY_SLUG_QUERY_RESULT;
-    "\n  *[_type == \"project\" && defined(slug.current)]{\"slug\": slug.current}\n": PROJECT_SLUGS_QUERY_RESULT;
-    "\n  *[_type == \"experience\"] | order(startDate desc, order asc){\n    _id,\n    role,\n    organization,\n    logo{asset->{_id, url}},\n    type,\n    startDate,\n    endDate,\n    description\n  }\n": EXPERIENCE_QUERY_RESULT;
+    '\n  *[_id == "siteSettings"][0]{\n    name,\n    title,\n    about,\n    profileImage{\n      asset->{_id, url, metadata{lqip, dimensions{width, height}}},\n      alt,\n      hotspot,\n      crop\n    },\n    resumeFile{\n      asset->{_id, url, originalFilename}\n    },\n    socialLinks[]{_key, platform, url},\n    skillCategories[]{\n      _key,\n      name,\n      skills[]{\n        _key,\n        name,\n        icon{asset->{_id, url}, alt}\n      }\n    },\n    seo{\n      title,\n      description,\n      ogImage{asset->{_id, url}}\n    }\n  }\n': SITE_SETTINGS_QUERY_RESULT;
+    '\n  *[_type == "project" && defined(slug.current)] | order(featured desc, order asc, _createdAt desc){\n    _id,\n    title,\n    "slug": slug.current,\n    coverImage{\n      asset->{_id, url, metadata{lqip, dimensions{width, height}}},\n      alt,\n      hotspot,\n      crop\n    },\n    summary,\n    techStack,\n    repoUrl,\n    liveUrl,\n    featured,\n    "hasCaseStudy": defined(body) && length(body) > 0\n  }\n': PROJECTS_QUERY_RESULT;
+    '\n  *[_type == "project" && slug.current == $slug][0]{\n    _id,\n    title,\n    "slug": slug.current,\n    coverImage{\n      asset->{_id, url, metadata{lqip, dimensions{width, height}}},\n      alt,\n      hotspot,\n      crop\n    },\n    gallery[]{\n      _key,\n      asset->{_id, url, metadata{lqip, dimensions{width, height}}},\n      alt,\n      hotspot,\n      crop\n    },\n    summary,\n    body,\n    techStack,\n    repoUrl,\n    liveUrl\n  }\n': PROJECT_BY_SLUG_QUERY_RESULT;
+    '\n  *[_type == "project" && defined(slug.current)]{"slug": slug.current}\n': PROJECT_SLUGS_QUERY_RESULT;
+    '\n  *[_type == "experience"] | order(startDate desc, order asc){\n    _id,\n    role,\n    organization,\n    logo{asset->{_id, url}},\n    type,\n    startDate,\n    endDate,\n    description\n  }\n': EXPERIENCE_QUERY_RESULT;
   }
 }
-
