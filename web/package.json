@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
-    "docker:up": "docker compose --env-file .env.local up --build",
+    "docker:up": "docker compose --env-file .env.local up --build -d",
     "docker:dev": "docker compose --env-file .env.local --profile dev up --build app-dev",
     "docker:down": "docker compose --env-file .env.local down"
   },

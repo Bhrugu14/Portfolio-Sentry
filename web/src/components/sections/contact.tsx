@@ -1,17 +1,10 @@
 'use client'
 
 import { useState, type FormEvent } from 'react'
+import { SocialLinks } from '@/components/ui/social-links'
 import type { SITE_SETTINGS_QUERY_RESULT } from '../../../sanity.types'
 
 type Status = 'idle' | 'submitting' | 'success' | 'error'
-
-const SOCIAL_LABELS: Record<string, string> = {
-  github: 'GitHub',
-  linkedin: 'LinkedIn',
-  twitter: 'X / Twitter',
-  email: 'Email',
-  other: 'Link',
-}
 
 export function Contact({ settings }: { settings: NonNullable<SITE_SETTINGS_QUERY_RESULT> }) {
   const [status, setStatus] = useState<Status>('idle')
@@ -116,15 +109,7 @@ export function Contact({ settings }: { settings: NonNullable<SITE_SETTINGS_QUER
         )}
       </form>
       {settings.socialLinks && settings.socialLinks.length > 0 && (
-        <ul className="mt-10 flex flex-wrap gap-4 text-sm">
-          {settings.socialLinks.map((link) => (
-            <li key={link._key}>
-              <a href={link.url ?? undefined} target="_blank" rel="noopener noreferrer" className="text-muted hover:text-accent">
-                {SOCIAL_LABELS[link.platform ?? 'other'] ?? link.platform}
-              </a>
-            </li>
-          ))}
-        </ul>
+        <SocialLinks links={settings.socialLinks} className="mt-10 flex flex-wrap gap-4 text-sm" />
       )}
     </section>
   )

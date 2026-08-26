@@ -112,6 +112,40 @@ export function deriveAccentForeground(accentHex: string): string {
   return contrastRatio(accentHex, '#ffffff') >= contrastRatio(accentHex, '#000000') ? '#ffffff' : '#000000'
 }
 
+/** WCAG AA threshold for normal text/UI elements. */
+const MIN_CONTRAST = 4.5
+
+/**
+ * If `hex` doesn't have enough contrast against `backgroundHex`, pushes its
+ * lightness away from the background (preserving hue/saturation) via binary
+ * search until it clears MIN_CONTRAST. A no-op if already sufficient. Used
+ * to fix up accent colors after dark-mode inversion, since pure lightness
+ * inversion is only correct for colors already near a lightness extreme.
+ */
+function ensureContrast(hex: string, backgroundHex: string): string {
+  if (contrastRatio(hex, backgroundHex) >= MIN_CONTRAST) return hex
+
+  const [h, s, l] = rgbToHsl(...hexToRgb(hex))
+  const backgroundIsDark = relativeLuminance(backgroundHex) < 0.5
+  let lo = backgroundIsDark ? l : 0
+  let hi = backgroundIsDark ? 1 : l
+
+  for (let i = 0; i < 20; i++) {
+    const mid = (lo + hi) / 2
+    const candidate = rgbToHex(...hslToRgb(h, s, mid))
+    const meetsThreshold = contrastRatio(candidate, backgroundHex) >= MIN_CONTRAST
+    if (backgroundIsDark) {
+      if (meetsThreshold) hi = mid
+      else lo = mid
+    } else {
+      if (meetsThreshold) lo = mid
+      else hi = mid
+    }
+  }
+
+  return rgbToHex(...hslToRgb(h, s, backgroundIsDark ? hi : lo))
+}
+
 export interface ThemeColorPicks {
   background: string
   text: string
@@ -142,9 +176,12 @@ export function computeThemeTokens(picks: ThemeColorPicks): ThemeTokens {
 
 /** Same as computeThemeTokens, but auto-derives the dark-mode variant of each picked color first. */
 export function computeDarkThemeTokens(picks: ThemeColorPicks): ThemeTokens {
+  const darkBackground = deriveDarkVariant(picks.background)
+  const darkText = deriveDarkVariant(picks.text)
+  const darkAccent = ensureContrast(deriveDarkVariant(picks.accent), darkBackground)
   return computeThemeTokens({
-    background: deriveDarkVariant(picks.background),
-    text: deriveDarkVariant(picks.text),
-    accent: deriveDarkVariant(picks.accent),
+    background: darkBackground,
+    text: darkText,
+    accent: darkAccent,
   })
 }

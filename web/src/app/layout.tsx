@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import { GoogleAnalytics } from '@next/third-parties/google'
 import { ThemeProvider } from '@/components/theme-provider'
 import { env } from '@/lib/env'
+import { computeThemeTokens, computeDarkThemeTokens, type ThemeColorPicks, type ThemeTokens } from '@/lib/color-math'
 import { SanityLive, sanityFetch } from '@/sanity/live'
 import { SITE_SETTINGS_QUERY } from '@/sanity/queries'
 import { urlFor } from '@/sanity/image'
@@ -29,11 +30,46 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+function tokensToCssBlock(selector: string, tokens: ThemeTokens): string {
+  return `${selector} {
+    --background: ${tokens.background};
+    --foreground: ${tokens.foreground};
+    --surface: ${tokens.surface};
+    --border: ${tokens.border};
+    --muted: ${tokens.muted};
+    --accent: ${tokens.accent};
+    --accent-foreground: ${tokens.accentForeground};
+  }`
+}
+
+const HEX_COLOR_PATTERN = /^#[0-9a-fA-F]{6}$/
+
+function isCompletePicks(colors: Partial<Record<keyof ThemeColorPicks, string | null | undefined>> | null | undefined): colors is ThemeColorPicks {
+  return Boolean(
+    colors?.background && HEX_COLOR_PATTERN.test(colors.background) &&
+    colors?.text && HEX_COLOR_PATTERN.test(colors.text) &&
+    colors?.accent && HEX_COLOR_PATTERN.test(colors.accent),
+  )
+}
+
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const gaId = env.gaMeasurementId
+  const { data: settings } = await sanityFetch({ query: SITE_SETTINGS_QUERY, stega: false })
+
+  const appearance = settings?.appearance
+  const activeTheme = appearance?.activeTheme === 'professional' ? 'professional' : 'minimal'
+  const picks = activeTheme === 'professional' ? appearance?.professional : appearance?.minimal
+
+  // Additive by design: if appearance data isn't there yet, render nothing
+  // extra and fall back to globals.css's existing hardcoded defaults.
+  const themeCss = isCompletePicks(picks)
+    ? `${tokensToCssBlock(':root', computeThemeTokens(picks))}\n${tokensToCssBlock('.dark', computeDarkThemeTokens(picks))}`
+    : null
+  const htmlClassName = activeTheme === 'professional' ? 'theme-professional' : undefined
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={htmlClassName}>
+      <head>{themeCss && <style dangerouslySetInnerHTML={{ __html: themeCss }} />}</head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ThemeProvider>{children}</ThemeProvider>
         <SanityLive />

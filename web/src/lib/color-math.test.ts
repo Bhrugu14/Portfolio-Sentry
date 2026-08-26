@@ -6,6 +6,7 @@ import {
   deriveDarkVariant,
   deriveAccentForeground,
   computeThemeTokens,
+  computeDarkThemeTokens,
 } from './color-math'
 
 describe('contrastRatio', () => {
@@ -87,5 +88,17 @@ describe('computeThemeTokens', () => {
     const [, , mutedLightness] = rgbToHsl(...hexToRgb(tokens.muted))
     expect(mutedLightness).toBeGreaterThan(textLightness)
     expect(mutedLightness).toBeLessThan(0.5)
+  })
+})
+
+describe('computeDarkThemeTokens contrast', () => {
+  it('keeps the derived dark accent readable against the derived dark background (WCAG AA)', () => {
+    const dark = computeDarkThemeTokens({ background: '#fafafa', text: '#18181b', accent: '#6366f1' })
+    expect(contrastRatio(dark.accent, dark.background)).toBeGreaterThanOrEqual(4.5)
+  })
+
+  it('keeps the derived dark accent-on-accent foreground text readable', () => {
+    const dark = computeDarkThemeTokens({ background: '#fafafa', text: '#18181b', accent: '#6366f1' })
+    expect(contrastRatio(dark.accentForeground, dark.accent)).toBeGreaterThanOrEqual(4.5)
   })
 })

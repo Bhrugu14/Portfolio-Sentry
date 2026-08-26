@@ -1371,6 +1371,14 @@
         },
         "optional": true
       },
+      "appearance": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "inline",
+          "name": "appearance"
+        },
+        "optional": true
+      },
       "seo": {
         "type": "objectAttribute",
         "value": {
@@ -1440,6 +1448,92 @@
           }
         },
         "optional": true
+      }
+    }
+  },
+  {
+    "name": "appearance",
+    "type": "type",
+    "value": {
+      "type": "object",
+      "attributes": {
+        "_type": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string",
+            "value": "appearance"
+          }
+        },
+        "activeTheme": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "union",
+            "of": [
+              {
+                "type": "string",
+                "value": "minimal"
+              },
+              {
+                "type": "string",
+                "value": "professional"
+              }
+            ]
+          },
+          "optional": true
+        },
+        "minimal": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "inline",
+            "name": "themeColors"
+          },
+          "optional": true
+        },
+        "professional": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "inline",
+            "name": "themeColors"
+          },
+          "optional": true
+        }
+      }
+    }
+  },
+  {
+    "name": "themeColors",
+    "type": "type",
+    "value": {
+      "type": "object",
+      "attributes": {
+        "_type": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string",
+            "value": "themeColors"
+          }
+        },
+        "background": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "text": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "accent": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        }
       }
     }
   },

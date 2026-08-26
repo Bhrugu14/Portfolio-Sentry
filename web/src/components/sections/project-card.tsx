@@ -1,12 +1,10 @@
 import Link from 'next/link'
 import { SanityImage } from '@/components/ui/sanity-image'
+import { getProjectPrimaryLink } from '@/lib/project-links'
 import type { PROJECTS_QUERY_RESULT } from '../../../sanity.types'
 
 export function ProjectCard({ project }: { project: PROJECTS_QUERY_RESULT[number] }) {
-  const primaryHref = project.hasCaseStudy
-    ? `/projects/${project.slug}`
-    : project.liveUrl || project.repoUrl || '#'
-  const isExternal = !project.hasCaseStudy
+  const { href: primaryHref, isExternal } = getProjectPrimaryLink(project)
 
   const content = (
     <>

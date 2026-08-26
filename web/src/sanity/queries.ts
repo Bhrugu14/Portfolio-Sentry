@@ -24,6 +24,11 @@ export const SITE_SETTINGS_QUERY = defineQuery(`
         icon{asset->{_id, url}, alt}
       }
     },
+    appearance{
+      activeTheme,
+      minimal{background, text, accent},
+      professional{background, text, accent}
+    },
     seo{
       title,
       description,

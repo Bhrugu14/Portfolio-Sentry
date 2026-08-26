@@ -10,6 +10,7 @@ export const siteSettings = defineType({
   groups: [
     { name: 'profile', title: 'Profile', default: true },
     { name: 'skills', title: 'Skills' },
+    { name: 'appearance', title: 'Appearance' },
     { name: 'seo', title: 'SEO' },
   ],
   fields: [
@@ -74,6 +75,12 @@ export const siteSettings = defineType({
       of: [defineArrayMember({ type: 'skillCategory' })],
       group: 'skills',
       validation: (rule) => rule.min(1).error('Add at least one skill category'),
+    }),
+    defineField({
+      name: 'appearance',
+      title: 'Appearance',
+      type: 'appearance',
+      group: 'appearance',
     }),
     defineField({
       name: 'seo',

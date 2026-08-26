@@ -61,3 +61,72 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* Professional theme: same components/layout as Minimal, but a serif
+   display font for headings, tighter section spacing, bordered project
+   cards, and a de-timelined experience list. Colors are NOT set here —
+   they come from the CSS custom properties RootLayout injects based on
+   Studio data; this block is purely structural. */
+.theme-professional h1,
+.theme-professional h2,
+.theme-professional h3 {
+  font-family: Georgia, 'Times New Roman', serif;
+}
+
+.theme-professional section:not(#home) {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+
+.theme-professional #projects .group {
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+}
+
+.theme-professional #experience > ol {
+  border-left: none;
+  padding-left: 0;
+  gap: 1.5rem;
+}
+
+.theme-professional #experience > ol > li {
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 1.5rem;
+}
+
+.theme-professional #experience > ol > li:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.theme-professional #experience > ol > li > span:first-child {
+  display: none;
+}
+
+.theme-professional {
+  scroll-padding-top: 0;
+}
+
+.theme-professional #skills h2::before {
+  content: '01 / ';
+}
+
+.theme-professional #projects h2::before {
+  content: '02 / ';
+}
+
+.theme-professional #experience h2::before {
+  content: '03 / ';
+}
+
+.theme-professional #contact h2::before {
+  content: '04 / ';
+}
+
+.theme-professional #skills h2,
+.theme-professional #projects h2,
+.theme-professional #experience h2,
+.theme-professional #contact h2 {
+  font-family: var(--font-mono), 'Courier New', monospace;
+  letter-spacing: 0.05em;
+}
