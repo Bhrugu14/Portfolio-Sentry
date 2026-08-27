@@ -18,8 +18,8 @@ export function Projects({ projects, theme }: { projects: PROJECTS_QUERY_RESULT;
         </div>
       )}
       <div className="grid gap-6 sm:grid-cols-2">
-        {rest.map((project) => (
-          <ProjectCard key={project._id} project={project} />
+        {rest.map((project, i) => (
+          <ProjectCard key={project._id} project={project} index={i} />
         ))}
       </div>
     </section>

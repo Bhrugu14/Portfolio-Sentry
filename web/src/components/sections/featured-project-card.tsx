@@ -1,4 +1,7 @@
+'use client'
+
 import Link from 'next/link'
+import { motion } from 'framer-motion'
 import { SanityImage } from '@/components/ui/sanity-image'
 import { getProjectPrimaryLink } from '@/lib/project-links'
 import type { PROJECTS_QUERY_RESULT } from '../../../sanity.types'
@@ -9,12 +12,7 @@ export function FeaturedProjectCard({ project }: { project: PROJECTS_QUERY_RESUL
 
   const content = (
     <div className="grid overflow-hidden rounded-xl border border-border bg-surface sm:grid-cols-2">
-      <SanityImage
-        value={project.coverImage}
-        width={800}
-        height={480}
-        className="h-full w-full object-cover"
-      />
+      <SanityImage value={project.coverImage} width={800} height={480} className="h-full w-full object-cover" />
       <div className="flex flex-col justify-center gap-3 p-6">
         <span className="text-xs font-semibold uppercase tracking-widest text-accent">Featured</span>
         <h3 className="text-xl font-semibold">{project.title}</h3>
@@ -32,17 +30,24 @@ export function FeaturedProjectCard({ project }: { project: PROJECTS_QUERY_RESUL
     </div>
   )
 
-  if (isExternal) {
-    return (
-      <a href={primaryHref} target="_blank" rel="noopener noreferrer" className="block">
-        {content}
-      </a>
-    )
-  }
+  const className = 'block transition-transform duration-200 hover:-translate-y-1 active:scale-[0.99]'
 
   return (
-    <Link href={primaryHref} className="block">
-      {content}
-    </Link>
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-80px' }}
+      transition={{ duration: 0.5 }}
+    >
+      {isExternal ? (
+        <a href={primaryHref} target="_blank" rel="noopener noreferrer" className={className}>
+          {content}
+        </a>
+      ) : (
+        <Link href={primaryHref} className={className}>
+          {content}
+        </Link>
+      )}
+    </motion.div>
   )
 }

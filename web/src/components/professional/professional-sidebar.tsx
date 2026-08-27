@@ -65,6 +65,9 @@ export function ProfessionalSidebar({
         <h1 className="text-2xl font-semibold">{settings.name}</h1>
         <p className="mt-1 text-muted">{settings.title}</p>
       </div>
+      {settings.socialLinks && settings.socialLinks.length > 0 && (
+        <SocialLinks links={settings.socialLinks} className="flex flex-wrap gap-4 text-sm" />
+      )}
       {settings.about && (
         <div className="prose prose-neutral prose-sm max-w-none text-foreground dark:prose-invert">
           <PortableText value={settings.about} />
@@ -77,7 +80,7 @@ export function ProfessionalSidebar({
               <a
                 href={link.href}
                 aria-current={activeHref === link.href ? 'true' : undefined}
-                className={`transition-colors hover:text-accent ${
+                className={`inline-block transition-all duration-200 hover:translate-x-1 hover:text-accent ${
                   activeHref === link.href ? 'font-semibold text-accent' : 'text-muted'
                 }`}
               >
@@ -87,9 +90,6 @@ export function ProfessionalSidebar({
           ))}
         </ul>
       </nav>
-      {settings.socialLinks && settings.socialLinks.length > 0 && (
-        <SocialLinks links={settings.socialLinks} className="flex flex-wrap gap-4 text-sm" />
-      )}
       {resumeUrl && (
         <ResumeDownloadLink href={resumeUrl} fileName={resumeFileName} className="text-sm font-medium text-accent hover:underline">
           Download résumé

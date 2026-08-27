@@ -1,0 +1,35 @@
+echo "🔍 Pre-commit checks (informational only — this never blocks your commit)"
+echo ""
+
+cd web || exit 0
+
+echo "→ Checking package-lock.json is in sync with package.json..."
+npm install --package-lock-only --silent 2>/dev/null
+if ! git diff --quiet -- package-lock.json; then
+  echo "⚠️  web/package-lock.json was out of sync (just corrected in your working tree)."
+  echo "    Review the change and re-stage it if you want it in this commit."
+else
+  echo "✅ Lockfile in sync."
+fi
+echo ""
+
+echo "→ Running npm audit (high/critical only)..."
+if npm audit --audit-level=high > /tmp/pre-commit-audit.log 2>&1; then
+  echo "✅ No high/critical vulnerabilities."
+else
+  echo "⚠️  npm audit found issues:"
+  tail -20 /tmp/pre-commit-audit.log
+fi
+echo ""
+
+echo "→ Running tests..."
+if npm test > /tmp/pre-commit-tests.log 2>&1; then
+  echo "✅ Tests passed."
+else
+  echo "⚠️  Tests failed — review before pushing (commit is proceeding anyway):"
+  tail -30 /tmp/pre-commit-tests.log
+fi
+echo ""
+
+echo "Pre-commit checks complete."
+exit 0

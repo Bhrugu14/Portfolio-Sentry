@@ -27,7 +27,8 @@ export const SITE_SETTINGS_QUERY = defineQuery(`
     appearance{
       activeTheme,
       minimal{background, text, accent},
-      professional{background, text, accent}
+      professional{background, text, accent},
+      cursorGlowEnabled
     },
     seo{
       title,
@@ -38,7 +39,7 @@ export const SITE_SETTINGS_QUERY = defineQuery(`
 `)
 
 export const PROJECTS_QUERY = defineQuery(`
-  *[_type == "project" && defined(slug.current)] | order(featured desc, order asc, _createdAt desc){
+  *[_type == "project" && defined(slug.current) && showOnSite != false] | order(featured desc, order asc, _createdAt desc){
     _id,
     title,
     "slug": slug.current,
@@ -58,7 +59,7 @@ export const PROJECTS_QUERY = defineQuery(`
 `)
 
 export const PROJECT_BY_SLUG_QUERY = defineQuery(`
-  *[_type == "project" && slug.current == $slug][0]{
+  *[_type == "project" && slug.current == $slug && showOnSite != false][0]{
     _id,
     title,
     "slug": slug.current,
@@ -84,7 +85,7 @@ export const PROJECT_BY_SLUG_QUERY = defineQuery(`
 `)
 
 export const PROJECT_SLUGS_QUERY = defineQuery(`
-  *[_type == "project" && defined(slug.current)]{"slug": slug.current}
+  *[_type == "project" && defined(slug.current) && showOnSite != false]{"slug": slug.current}
 `)
 
 export const EXPERIENCE_QUERY = defineQuery(`

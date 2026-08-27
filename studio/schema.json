@@ -938,6 +938,13 @@
         },
         "optional": true
       },
+      "showOnSite": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "boolean"
+        },
+        "optional": true
+      },
       "featured": {
         "type": "objectAttribute",
         "value": {
@@ -1494,6 +1501,13 @@
           "value": {
             "type": "inline",
             "name": "themeColors"
+          },
+          "optional": true
+        },
+        "cursorGlowEnabled": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "boolean"
           },
           "optional": true
         }

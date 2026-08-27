@@ -83,6 +83,13 @@ export const project = defineType({
       validation: (rule) => rule.uri({ scheme: ['http', 'https'] }),
     }),
     defineField({
+      name: 'showOnSite',
+      title: 'Show on Site',
+      description: 'Turn off to hide this project from the live site without deleting it (e.g. drafts, work in progress).',
+      type: 'boolean',
+      initialValue: true,
+    }),
+    defineField({
       name: 'featured',
       title: 'Featured',
       type: 'boolean',
@@ -104,9 +111,12 @@ export const project = defineType({
     },
   ],
   preview: {
-    select: { title: 'title', media: 'coverImage', featured: 'featured' },
-    prepare({ title, media, featured }) {
-      return { title, subtitle: featured ? 'Featured' : undefined, media }
+    select: { title: 'title', media: 'coverImage', featured: 'featured', showOnSite: 'showOnSite' },
+    prepare({ title, media, featured, showOnSite }) {
+      const subtitle = [showOnSite === false ? 'Hidden' : undefined, featured ? 'Featured' : undefined]
+        .filter(Boolean)
+        .join(' · ')
+      return { title, subtitle: subtitle || undefined, media }
     },
   },
 })

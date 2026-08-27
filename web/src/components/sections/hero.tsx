@@ -41,7 +41,7 @@ export function Hero({ settings }: { settings: NonNullable<SITE_SETTINGS_QUERY_R
       >
         <a
           href="#contact"
-          className="rounded-full bg-accent px-6 py-2.5 text-sm font-medium text-accent-foreground transition-opacity hover:opacity-90"
+          className="rounded-full bg-accent px-6 py-2.5 text-sm font-medium text-accent-foreground transition-all hover:-translate-y-0.5 hover:opacity-90 active:translate-y-0 active:scale-[0.97]"
         >
           Get in touch
         </a>
@@ -49,7 +49,7 @@ export function Hero({ settings }: { settings: NonNullable<SITE_SETTINGS_QUERY_R
           <ResumeDownloadLink
             href={resumeUrl}
             fileName={resumeFileName}
-            className="rounded-full border border-border px-6 py-2.5 text-sm font-medium transition-colors hover:border-accent hover:text-accent"
+            className="rounded-full border border-border px-6 py-2.5 text-sm font-medium transition-all hover:-translate-y-0.5 hover:border-accent hover:text-accent active:translate-y-0 active:scale-[0.97]"
           >
             Download résumé
           </ResumeDownloadLink>

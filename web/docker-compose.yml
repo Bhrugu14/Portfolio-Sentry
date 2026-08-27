@@ -23,6 +23,11 @@ services:
       target: dev
     env_file:
       - .env.local
+    environment:
+      # Docker Desktop's bind-mount file events don't always reach the
+      # container's watcher reliably (notably on macOS/Windows) — polling
+      # is slightly heavier on CPU but makes hot reload actually fire.
+      WATCHPACK_POLLING: 'true'
     ports:
       - '3000:3000'
     volumes:

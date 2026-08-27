@@ -34,7 +34,10 @@ export function Nav({ visibility }: { visibility: SectionVisibility }) {
         <ul className="hidden gap-6 text-sm text-muted sm:flex">
           {links.map((link) => (
             <li key={link.href}>
-              <a href={link.href} className="transition-colors hover:text-accent">
+              <a
+                href={link.href}
+                className="relative transition-colors after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0 after:bg-accent after:transition-all after:duration-300 hover:text-accent hover:after:w-full"
+              >
                 {link.label}
               </a>
             </li>

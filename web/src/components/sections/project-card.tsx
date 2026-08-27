@@ -1,9 +1,12 @@
+'use client'
+
 import Link from 'next/link'
+import { motion } from 'framer-motion'
 import { SanityImage } from '@/components/ui/sanity-image'
 import { getProjectPrimaryLink } from '@/lib/project-links'
 import type { PROJECTS_QUERY_RESULT } from '../../../sanity.types'
 
-export function ProjectCard({ project }: { project: PROJECTS_QUERY_RESULT[number] }) {
+export function ProjectCard({ project, index = 0 }: { project: PROJECTS_QUERY_RESULT[number]; index?: number }) {
   const { href: primaryHref, isExternal } = getProjectPrimaryLink(project)
 
   const content = (
@@ -33,19 +36,25 @@ export function ProjectCard({ project }: { project: PROJECTS_QUERY_RESULT[number
     </>
   )
 
-  const className = 'group block rounded-xl p-2 transition-colors hover:bg-surface'
-
-  if (isExternal) {
-    return (
-      <a href={primaryHref} target="_blank" rel="noopener noreferrer" className={className}>
-        {content}
-      </a>
-    )
-  }
+  const className =
+    'group block rounded-xl p-2 transition-all duration-200 hover:bg-surface hover:-translate-y-0.5 active:scale-[0.98]'
 
   return (
-    <Link href={primaryHref} className={className}>
-      {content}
-    </Link>
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-80px' }}
+      transition={{ duration: 0.5, delay: index * 0.05 }}
+    >
+      {isExternal ? (
+        <a href={primaryHref} target="_blank" rel="noopener noreferrer" className={className}>
+          {content}
+        </a>
+      ) : (
+        <Link href={primaryHref} className={className}>
+          {content}
+        </Link>
+      )}
+    </motion.div>
   )
 }

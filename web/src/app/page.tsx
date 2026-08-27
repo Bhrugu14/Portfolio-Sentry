@@ -5,15 +5,8 @@ import {
   PROJECTS_QUERY,
   SITE_SETTINGS_QUERY,
 } from "@/sanity/queries";
-import { Nav, type SectionVisibility } from "@/components/nav";
-import { Hero } from "@/components/sections/hero";
-import { About } from "@/components/sections/about";
-import { Skills } from "@/components/sections/skills";
-import { Projects } from "@/components/sections/projects";
-import { Experience } from "@/components/sections/experience";
-import { Contact } from "@/components/sections/contact";
-import { Footer } from "@/components/sections/footer";
-import { ProfessionalLayout } from "@/components/professional/professional-layout";
+import type { SectionVisibility } from "@/components/nav";
+import { resolveThemeName, THEME_LAYOUTS } from "@/lib/theme-registry";
 
 export default async function Home() {
   const [{ data: settings }, { data: projects }, { data: experience }] =
@@ -32,34 +25,8 @@ export default async function Home() {
     experience: experience.length > 0,
   };
 
-  const activeTheme = settings.appearance?.activeTheme === "professional" ? "professional" : "minimal";
+  const activeTheme = resolveThemeName(settings.appearance?.activeTheme);
+  const Layout = THEME_LAYOUTS[activeTheme];
 
-  if (activeTheme === "professional") {
-    return (
-      <>
-        <ProfessionalLayout settings={settings} visibility={visibility}>
-          <Skills settings={settings} />
-          <Projects projects={projects} theme="professional" />
-          <Experience items={experience} />
-          <Contact settings={settings} />
-        </ProfessionalLayout>
-        <Footer name={settings.name} />
-      </>
-    );
-  }
-
-  return (
-    <>
-      <Nav visibility={visibility} />
-      <main>
-        <Hero settings={settings} />
-        <About settings={settings} />
-        <Skills settings={settings} />
-        <Projects projects={projects} theme="minimal" />
-        <Experience items={experience} />
-        <Contact settings={settings} />
-      </main>
-      <Footer name={settings.name} />
-    </>
-  );
+  return <Layout settings={settings} visibility={visibility} projects={projects} experience={experience} />;
 }

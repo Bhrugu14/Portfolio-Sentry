@@ -4,9 +4,11 @@ import { GoogleAnalytics } from '@next/third-parties/google'
 import { ThemeProvider } from '@/components/theme-provider'
 import { env } from '@/lib/env'
 import { computeThemeTokens, computeDarkThemeTokens, type ThemeColorPicks, type ThemeTokens } from '@/lib/color-math'
+import { resolveThemeName } from '@/lib/theme-registry'
 import { SanityLive, sanityFetch } from '@/sanity/live'
 import { SITE_SETTINGS_QUERY } from '@/sanity/queries'
 import { urlFor } from '@/sanity/image'
+import { CursorGlow } from '@/components/ui/cursor-glow'
 import './globals.css'
 
 const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] })
@@ -57,7 +59,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const { data: settings } = await sanityFetch({ query: SITE_SETTINGS_QUERY, stega: false })
 
   const appearance = settings?.appearance
-  const activeTheme = appearance?.activeTheme === 'professional' ? 'professional' : 'minimal'
+  const activeTheme = resolveThemeName(appearance?.activeTheme)
   const picks = activeTheme === 'professional' ? appearance?.professional : appearance?.minimal
 
   // Additive by design: if appearance data isn't there yet, render nothing
@@ -65,12 +67,14 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const themeCss = isCompletePicks(picks)
     ? `${tokensToCssBlock(':root', computeThemeTokens(picks))}\n${tokensToCssBlock('.dark', computeDarkThemeTokens(picks))}`
     : null
-  const htmlClassName = activeTheme === 'professional' ? 'theme-professional' : undefined
+  const htmlClassName = `theme-${activeTheme}`
+  const cursorGlowEnabled = appearance?.cursorGlowEnabled !== false
 
   return (
     <html lang="en" suppressHydrationWarning className={htmlClassName}>
       <head>{themeCss && <style dangerouslySetInnerHTML={{ __html: themeCss }} />}</head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        {cursorGlowEnabled && <CursorGlow />}
         <ThemeProvider>{children}</ThemeProvider>
         <SanityLive />
         {gaId && <GoogleAnalytics gaId={gaId} />}

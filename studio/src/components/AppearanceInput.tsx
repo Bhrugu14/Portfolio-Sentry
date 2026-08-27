@@ -1,6 +1,6 @@
 // studio/src/components/AppearanceInput.tsx
-import { useCallback } from 'react'
-import { Button, Card, Flex, Stack, Text, TextInput } from '@sanity/ui'
+import { useCallback, type ChangeEvent } from 'react'
+import { Button, Card, Flex, Stack, Switch, Text, TextInput } from '@sanity/ui'
 import { set, type ObjectInputProps } from 'sanity'
 import { contrastRatio } from '../lib/contrast'
 
@@ -11,6 +11,7 @@ type AppearanceValue = {
   activeTheme?: ThemeKey
   minimal?: ThemeColors
   professional?: ThemeColors
+  cursorGlowEnabled?: boolean
 }
 
 const THEMES: { key: ThemeKey; title: string; headingFont: string }[] = [
@@ -71,6 +72,14 @@ export function AppearanceInput(props: ObjectInputProps) {
     [props, value],
   )
 
+  const cursorGlowEnabled = value.cursorGlowEnabled ?? true
+  const handleCursorGlowChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      props.onChange(set(event.target.checked, ['cursorGlowEnabled']))
+    },
+    [props],
+  )
+
   return (
     <Stack gap={4}>
       <Card padding={3} radius={2} border>
@@ -87,6 +96,18 @@ export function AppearanceInput(props: ObjectInputProps) {
             ))}
           </Flex>
         </Stack>
+      </Card>
+
+      <Card padding={3} radius={2} border>
+        <Flex align="center" justify="space-between">
+          <Stack gap={2}>
+            <Text weight="semibold">Cursor glow effect</Text>
+            <Text size={1} muted>
+              A soft accent-colored glow that follows the cursor. Applies to both themes, desktop only.
+            </Text>
+          </Stack>
+          <Switch checked={cursorGlowEnabled} onChange={handleCursorGlowChange} />
+        </Flex>
       </Card>
 
       {THEMES.map((theme) => {

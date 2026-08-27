@@ -33,5 +33,12 @@ export const appearance = defineType({
       type: 'themeColors',
       initialValue: { background: '#f8f7f4', text: '#1a1a1a', accent: '#0f4c3a' },
     }),
+    defineField({
+      name: 'cursorGlowEnabled',
+      title: 'Cursor Glow Effect',
+      description: 'A soft accent-colored glow that follows the cursor. Applies to both themes. Desktop only (no effect on touch devices).',
+      type: 'boolean',
+      initialValue: true,
+    }),
   ],
 })
