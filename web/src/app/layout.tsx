@@ -9,6 +9,7 @@ import { SanityLive, sanityFetch } from '@/sanity/live'
 import { SITE_SETTINGS_QUERY } from '@/sanity/queries'
 import { urlFor } from '@/sanity/image'
 import { CursorGlow } from '@/components/ui/cursor-glow'
+import { SectionViewTracker } from '@/components/analytics/section-view-tracker'
 import './globals.css'
 
 const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] })
@@ -80,7 +81,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <ThemeProvider>{children}</ThemeProvider>
         <SanityLive />
         {analyticsEnabled && (
-          <Script src={env.umamiScriptUrl} data-website-id={env.umamiWebsiteId} strategy="afterInteractive" />
+          <>
+            <Script src={env.umamiScriptUrl} data-website-id={env.umamiWebsiteId} strategy="afterInteractive" />
+            <SectionViewTracker />
+          </>
         )}
       </body>
     </html>

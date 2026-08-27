@@ -126,6 +126,13 @@ Umami under each website's "Events" tab, no further setup needed):
 | `resume_download` | Someone downloads your résumé |
 | `project_link_click` | Someone clicks a project's live-site/repo link |
 | `social_link_click` | Someone clicks a social link (GitHub, LinkedIn, etc.) |
+| `section_view` | A page section (About, Projects, Experience, etc.) scrolls at least half into view — the event's data includes which one, e.g. `{ section: "projects" }` |
+
+**Why every pageview shows the same URL:** this site is a single page —
+clicking a nav link scrolls to a section instead of loading a new page, so
+Umami's automatic pageview tracking (which only fires on a real navigation)
+always shows `/`. The `section_view` event above is what tells you which
+sections people actually scroll through, since the URL alone can't.
 
 ## Running with Docker
 
