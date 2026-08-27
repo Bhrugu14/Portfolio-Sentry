@@ -1,8 +1,4 @@
-'use client'
-
 import type { ReactNode } from 'react'
-import { sendGAEvent } from '@next/third-parties/google'
-import { buildResumeDownloadEvent } from '@/lib/analytics-events'
 
 export function ResumeDownloadLink({
   href,
@@ -22,10 +18,10 @@ export function ResumeDownloadLink({
       target="_blank"
       rel="noopener noreferrer"
       className={className}
-      onClick={() => {
-        const event = buildResumeDownloadEvent(fileName, href)
-        sendGAEvent('event', event.name, event.params)
-      }}
+      // Declarative Umami event tracking: if the analytics script never loaded
+      // (unset env vars), these attributes just sit inert — nothing to break.
+      data-umami-event="resume_download"
+      data-umami-event-file-name={fileName}
     >
       {children}
     </a>

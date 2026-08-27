@@ -41,6 +41,7 @@ export function Hero({ settings }: { settings: NonNullable<SITE_SETTINGS_QUERY_R
       >
         <a
           href="#contact"
+          data-umami-event="contact_cta_click"
           className="rounded-full bg-accent px-6 py-2.5 text-sm font-medium text-accent-foreground transition-all hover:-translate-y-0.5 hover:opacity-90 active:translate-y-0 active:scale-[0.97]"
         >
           Get in touch

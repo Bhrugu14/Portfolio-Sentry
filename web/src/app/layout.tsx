@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
+import Script from 'next/script'
 import { Geist, Geist_Mono } from 'next/font/google'
-import { GoogleAnalytics } from '@next/third-parties/google'
 import { ThemeProvider } from '@/components/theme-provider'
 import { env } from '@/lib/env'
 import { computeThemeTokens, computeDarkThemeTokens, type ThemeColorPicks, type ThemeTokens } from '@/lib/color-math'
@@ -55,7 +55,9 @@ function isCompletePicks(colors: Partial<Record<keyof ThemeColorPicks, string | 
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const gaId = env.gaMeasurementId
+  // Analytics is fully optional — unset either var and it's silently skipped,
+  // never breaking the page. See README.md's "Analytics" section.
+  const analyticsEnabled = Boolean(env.umamiWebsiteId && env.umamiScriptUrl)
   const { data: settings } = await sanityFetch({ query: SITE_SETTINGS_QUERY, stega: false })
 
   const appearance = settings?.appearance
@@ -77,7 +79,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {cursorGlowEnabled && <CursorGlow />}
         <ThemeProvider>{children}</ThemeProvider>
         <SanityLive />
-        {gaId && <GoogleAnalytics gaId={gaId} />}
+        {analyticsEnabled && (
+          <Script src={env.umamiScriptUrl} data-website-id={env.umamiWebsiteId} strategy="afterInteractive" />
+        )}
       </body>
     </html>
   )

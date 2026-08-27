@@ -39,20 +39,24 @@ describe('env', () => {
   it('exposes optional values as undefined when unset', async () => {
     vi.stubEnv('NEXT_PUBLIC_SANITY_PROJECT_ID', 'abc123')
     vi.stubEnv('NEXT_PUBLIC_SANITY_DATASET', 'production')
-    vi.stubEnv('NEXT_PUBLIC_GA_MEASUREMENT_ID', undefined)
+    vi.stubEnv('NEXT_PUBLIC_UMAMI_WEBSITE_ID', undefined)
+    vi.stubEnv('NEXT_PUBLIC_UMAMI_SCRIPT_URL', undefined)
 
     const { env } = await importEnv()
 
-    expect(env.gaMeasurementId).toBeUndefined()
+    expect(env.umamiWebsiteId).toBeUndefined()
+    expect(env.umamiScriptUrl).toBeUndefined()
   })
 
   it('exposes optional values when set', async () => {
     vi.stubEnv('NEXT_PUBLIC_SANITY_PROJECT_ID', 'abc123')
     vi.stubEnv('NEXT_PUBLIC_SANITY_DATASET', 'production')
-    vi.stubEnv('NEXT_PUBLIC_GA_MEASUREMENT_ID', 'G-TEST123')
+    vi.stubEnv('NEXT_PUBLIC_UMAMI_WEBSITE_ID', 'test-website-id')
+    vi.stubEnv('NEXT_PUBLIC_UMAMI_SCRIPT_URL', 'https://umami.example.com/script.js')
 
     const { env } = await importEnv()
 
-    expect(env.gaMeasurementId).toBe('G-TEST123')
+    expect(env.umamiWebsiteId).toBe('test-website-id')
+    expect(env.umamiScriptUrl).toBe('https://umami.example.com/script.js')
   })
 })

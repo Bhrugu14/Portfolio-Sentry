@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from 'react'
 import { motion } from 'framer-motion'
 import { SocialLinks } from '@/components/ui/social-links'
+import { trackEvent } from '@/lib/umami'
 import type { SITE_SETTINGS_QUERY_RESULT } from '../../../sanity.types'
 
 type Status = 'idle' | 'submitting' | 'success' | 'error'
@@ -46,6 +47,7 @@ export function Contact({
       }
 
       setStatus('success')
+      trackEvent('contact_form_submitted')
       event.currentTarget.reset()
     } catch {
       setStatus('error')

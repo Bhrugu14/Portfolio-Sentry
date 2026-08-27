@@ -25,5 +25,6 @@ export const env = {
   sanityWriteToken: process.env.SANITY_API_WRITE_TOKEN, // contact form persistence
   resendApiKey: process.env.RESEND_API_KEY, // contact email notification
   contactEmailTo: process.env.CONTACT_EMAIL_TO, // contact email notification
-  gaMeasurementId: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID, // analytics
+  umamiWebsiteId: process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID, // analytics (self-hosted Umami)
+  umamiScriptUrl: process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL, // analytics (self-hosted Umami)
 }

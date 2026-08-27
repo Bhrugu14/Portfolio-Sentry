@@ -47,7 +47,14 @@ export function ProjectCard({ project, index = 0 }: { project: PROJECTS_QUERY_RE
       transition={{ duration: 0.5, delay: index * 0.05 }}
     >
       {isExternal ? (
-        <a href={primaryHref} target="_blank" rel="noopener noreferrer" className={className}>
+        <a
+          href={primaryHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-umami-event="project_link_click"
+          data-umami-event-project={project.title}
+          className={className}
+        >
           {content}
         </a>
       ) : (

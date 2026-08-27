@@ -19,7 +19,14 @@ export function SocialLinks({
     <ul className={className}>
       {links.map((link) => (
         <li key={link._key}>
-          <a href={link.url ?? undefined} target="_blank" rel="noopener noreferrer" className="text-muted hover:text-accent">
+          <a
+            href={link.url ?? undefined}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-umami-event="social_link_click"
+            data-umami-event-platform={link.platform ?? 'other'}
+            className="text-muted hover:text-accent"
+          >
             {SOCIAL_LABELS[link.platform ?? 'other'] ?? link.platform}
           </a>
         </li>

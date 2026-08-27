@@ -41,12 +41,26 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       )}
       <div className="mt-8 flex gap-4 text-sm">
         {project.liveUrl && (
-          <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">
+          <a
+            href={project.liveUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-umami-event="project_link_click"
+            data-umami-event-project={project.title}
+            className="text-accent hover:underline"
+          >
             Live site &rarr;
           </a>
         )}
         {project.repoUrl && (
-          <a href={project.repoUrl} target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">
+          <a
+            href={project.repoUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-umami-event="project_link_click"
+            data-umami-event-project={project.title}
+            className="text-accent hover:underline"
+          >
             Repository &rarr;
           </a>
         )}
