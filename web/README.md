@@ -47,7 +47,9 @@ All environment variables are read through one module, [`src/lib/env.ts`](src/li
 **Every optional variable enables its feature only when set.** Leave any of them blank and the app runs fine with that feature quietly turned off — no code changes needed:
 - No `NEXT_PUBLIC_UMAMI_WEBSITE_ID`/`NEXT_PUBLIC_UMAMI_SCRIPT_URL` (either one missing counts as "not set") → no analytics script is loaded, no tracking attributes do anything, nothing breaks.
 - No `RESEND_API_KEY`/`CONTACT_EMAIL_TO` → the contact form still saves to Sanity, just skips the email notification.
-- No `SANITY_API_READ_TOKEN`/`SANITY_API_WRITE_TOKEN` → published content still renders; drafts/preview and contact-form persistence are skipped.
+- No `SANITY_API_READ_TOKEN` → published content still renders; drafts/preview are skipped.
+- No `SANITY_API_WRITE_TOKEN` → contact-form persistence to Sanity is skipped (not attempted — it would only fail without a token). If `RESEND_API_KEY`/`CONTACT_EMAIL_TO` are set, the form still works via email only.
+- **Neither `SANITY_API_WRITE_TOKEN` nor a full `RESEND_API_KEY`+`CONTACT_EMAIL_TO` pair** → the contact form has no way to actually deliver a message. It tells visitors so ("This form is not fully set up yet") instead of pretending to succeed — set up at least one of the two before relying on it.
 
 The two required variables fail the app fast with a clear error (both at `next dev`/`next build` and inside Docker) if left unset — see `src/lib/env.ts`.
 
@@ -152,13 +154,16 @@ Projects, experience, skills, and site settings are all managed in the Sanity St
 
 ```bash
 cd ../studio
+cp .env.local.example .env.local   # same project ID/dataset as web/.env.local
 npm install
 npm run dev   # opens the Studio at http://localhost:3333
 ```
 
 Add a Project, Experience entry, etc. there and it appears on the site the next time it fetches data — no code changes needed. From the repo root you can also run `npm run dev` to start the Studio and this app together (see the root `package.json`).
 
-**If you're forking this for your own portfolio**, note that `studio/sanity.config.ts` has its `projectId`/`dataset` hardcoded (unlike `web/`, which reads them from `.env.local`) — update that file to point at your own Sanity project too.
+**If you're forking this for your own portfolio**, update `studio/.env.local` to point at your own Sanity project (same values you put in `web/.env.local`) — no code changes needed, same as `web/`.
+
+**Deploying the Studio** (optional — separate from deploying `web/` to Vercel): `npm run deploy` from `studio/` publishes it to Sanity's own hosting at a `your-project.sanity.studio` URL, so your content editors don't need to run it locally. `SANITY_STUDIO_PROJECT_ID`/`SANITY_STUDIO_DATASET` just need to be present in `studio/.env.local` on whatever machine runs that command — nothing to configure in Vercel, since the Studio isn't hosted there.
 
 ## Deploying
 

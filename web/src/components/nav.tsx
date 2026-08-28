@@ -22,14 +22,14 @@ const LINKS: { key: keyof SectionVisibility | 'contact'; href: string; label: st
   { key: 'contact', href: '#contact', label: 'Contact' },
 ]
 
-export function Nav({ visibility }: { visibility: SectionVisibility }) {
+export function Nav({ visibility, name }: { visibility: SectionVisibility; name?: string | null }) {
   const links = getVisibleLinks(LINKS, visibility)
 
   return (
     <header className="sticky top-0 z-10 border-b border-border bg-background/80 backdrop-blur">
       <nav className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
         <a href="#home" className="text-sm font-semibold">
-          Portfolio
+          {name || 'Portfolio'}
         </a>
         <ul className="hidden gap-6 text-sm text-muted sm:flex">
           {links.map((link) => (

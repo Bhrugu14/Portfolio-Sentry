@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { env } from '@/lib/env'
 import { validateContact, type ContactFormInput } from '@/lib/validate-contact'
+import { planContactDelivery } from '@/lib/contact-delivery'
 import { writeClient } from '@/sanity/write-client'
 
 export async function POST(request: Request) {
@@ -33,36 +34,61 @@ export async function POST(request: Request) {
 
   const { name, email, message } = result.data
 
-  try {
-    await writeClient.create({
-      _type: 'contactSubmission',
-      name,
-      email,
-      message,
-      submittedAt: new Date().toISOString(),
-    })
-  } catch (error) {
-    console.error('Failed to save contact submission to Sanity', error)
-    return NextResponse.json({ ok: false, errors: { form: 'Something went wrong. Please try again.' } }, { status: 500 })
+  const plan = planContactDelivery({
+    hasSanityWriteToken: Boolean(env.sanityWriteToken),
+    hasResendApiKey: Boolean(env.resendApiKey),
+    hasContactEmailTo: Boolean(env.contactEmailTo),
+  })
+
+  // Neither delivery method is configured — a Sanity write would fail on
+  // every submission (no auth token), so don't even attempt it. This is a
+  // site-owner config gap, not a runtime error; log it once for them and
+  // tell the visitor honestly rather than pretending the message arrived.
+  if (!plan.configured) {
+    console.warn(
+      'Contact form submission received but no delivery method is configured ' +
+        '(set SANITY_API_WRITE_TOKEN, or RESEND_API_KEY + CONTACT_EMAIL_TO — see README.md "Environment variables").',
+    )
+    return NextResponse.json(
+      { ok: false, errors: { form: 'This form is not fully set up yet. Please try again later.' } },
+      { status: 503 },
+    )
   }
 
-  const resendApiKey = env.resendApiKey
-  const to = env.contactEmailTo
-
-  if (resendApiKey && to) {
+  if (plan.persistToSanity) {
     try {
-      const resend = new Resend(resendApiKey)
+      await writeClient.create({
+        _type: 'contactSubmission',
+        name,
+        email,
+        message,
+        submittedAt: new Date().toISOString(),
+      })
+    } catch (error) {
+      console.error('Failed to save contact submission to Sanity', error)
+      return NextResponse.json({ ok: false, errors: { form: 'Something went wrong. Please try again.' } }, { status: 500 })
+    }
+  }
+
+  if (plan.sendEmail) {
+    try {
+      const resend = new Resend(env.resendApiKey)
       await resend.emails.send({
         from: 'Portfolio Contact Form <onboarding@resend.dev>',
-        to,
+        to: env.contactEmailTo!,
         replyTo: email,
         subject: `New portfolio message from ${name}`,
         text: `From: ${name} <${email}>\n\n${message}`,
       })
     } catch (error) {
-      // The submission is already saved in Sanity — log but don't fail the
-      // request just because the email notification didn't send.
+      // If Sanity persistence also ran, the submission is already saved —
+      // log but don't fail the request just because the email didn't send.
+      // If email was the only configured method, the visitor does need to
+      // know their message didn't get through.
       console.error('Failed to send contact notification email', error)
+      if (!plan.persistToSanity) {
+        return NextResponse.json({ ok: false, errors: { form: 'Something went wrong. Please try again.' } }, { status: 500 })
+      }
     }
   }
 

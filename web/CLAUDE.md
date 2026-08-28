@@ -88,6 +88,14 @@ there or it won't be editable).
 
 ## Testing & verification
 
+- **TDD is mandatory for anything with real logic** — functions, data
+  transforms, validation, dedup, event-handling: write the failing test
+  first (watch it fail), then the minimal code to pass, per Kent Beck's
+  Red-Green-Refactor cycle (this repo follows the Classicist/Chicago
+  style — real behavior, no mocking framework). Exempt: trivial prop
+  wiring, JSX-only changes, config values, docs — there's nothing
+  meaningful to assert on. When in doubt whether something counts as
+  "real logic," ask.
 - Vitest (`environment: 'node'`) — pure-function unit tests only, no
   component-rendering test infra (no React Testing Library/jsdom) exists
   in this repo. Don't add one without discussing it; it's a deliberate gap.
@@ -122,10 +130,6 @@ it's ever edited.
 
 ## Known pre-existing issues (not this project's introduced bugs)
 
-- `src/components/ui/theme-toggle.tsx` has a pre-existing
-  `react-hooks/set-state-in-effect` ESLint error (calling `setState`
-  synchronously in a `useEffect`). Known, not yet fixed, out of scope
-  unless explicitly asked.
 - `npm audit` in `web/` currently reports vulnerabilities transitively via
   `@sanity/cli-build`/`@sanity/workbench-cli` (old `uuid`). Fixing requires
   a breaking `next-sanity` major version bump — deliberate, not urgent.
