@@ -85,6 +85,15 @@ there or it won't be editable).
 - `sanity dev` runs with auto-updates enabled and can rewrite
   `studio/package.json`/`package-lock.json` on its own — don't assume an
   unexpected diff there is something you caused.
+- **The Studio is deployed as its own separate Vercel project** (root
+  directory `studio/`, distinct from the `web/` project — no `vercel.json`
+  in this repo marks that, so it's easy to miss). It builds via `sanity
+  build`, so `studio/sanity.config.ts`/`sanity.cli.ts`'s
+  `SANITY_STUDIO_PROJECT_ID`/`SANITY_STUDIO_DATASET` env vars are inlined
+  the same way `NEXT_PUBLIC_*` is for `web/` — they must be set in *that*
+  Vercel project's own env vars, not just `web/`'s. Missing this caused a
+  live "Configuration must contain `projectId`" break once, right after
+  the Studio config was switched from hardcoded values to env-driven.
 
 ## Testing & verification
 

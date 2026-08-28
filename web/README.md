@@ -163,7 +163,9 @@ Add a Project, Experience entry, etc. there and it appears on the site the next 
 
 **If you're forking this for your own portfolio**, update `studio/.env.local` to point at your own Sanity project (same values you put in `web/.env.local`) — no code changes needed, same as `web/`.
 
-**Deploying the Studio** (optional — separate from deploying `web/` to Vercel): `npm run deploy` from `studio/` publishes it to Sanity's own hosting at a `your-project.sanity.studio` URL, so your content editors don't need to run it locally. `SANITY_STUDIO_PROJECT_ID`/`SANITY_STUDIO_DATASET` just need to be present in `studio/.env.local` on whatever machine runs that command — nothing to configure in Vercel, since the Studio isn't hosted there.
+**Deploying the Studio** (optional — separate from deploying `web/`; pick one):
+- **Sanity's own hosting**: `npm run deploy` from `studio/` publishes to a `your-project.sanity.studio` URL. `SANITY_STUDIO_PROJECT_ID`/`SANITY_STUDIO_DATASET` just need to be present in `studio/.env.local` on whatever machine runs that command.
+- **Vercel, as its own separate project** (root directory set to `studio/`, distinct from the `web/` project): since `SANITY_STUDIO_PROJECT_ID`/`SANITY_STUDIO_DATASET` are inlined into the build the same way `NEXT_PUBLIC_*` vars are for `web/`, they must be added to **that Vercel project's** environment variables (Settings → Environment Variables) — a separate step from configuring the `web/` project's env vars, easy to miss since it's a second, independent Vercel project. Redeploy after adding them; saving env vars alone doesn't rebuild.
 
 ## Deploying
 
