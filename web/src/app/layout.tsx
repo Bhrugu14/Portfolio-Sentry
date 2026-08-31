@@ -21,6 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const title = settings?.seo?.title || settings?.name || 'Portfolio'
   const description = settings?.seo?.description || settings?.title || ''
   const ogImage = settings?.seo?.ogImage ? urlFor(settings.seo.ogImage).width(1200).height(630).url() : undefined
+  const favicon = settings?.seo?.favicon ? urlFor(settings.seo.favicon).width(180).height(180).url() : undefined
 
   return {
     // Only set when configured — an unset metadataBase just means Next
@@ -29,6 +30,10 @@ export async function generateMetadata(): Promise<Metadata> {
     metadataBase: env.siteUrl ? new URL(env.siteUrl) : undefined,
     title,
     description,
+    // Omitted entirely when unset — Next then falls back to the default
+    // src/app/favicon.ico file convention, same safe-fallback pattern as
+    // everything else in this project.
+    icons: favicon ? { icon: favicon, apple: favicon } : undefined,
     openGraph: {
       title,
       description,

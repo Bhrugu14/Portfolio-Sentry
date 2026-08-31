@@ -33,7 +33,8 @@ export const SITE_SETTINGS_QUERY = defineQuery(`
     seo{
       title,
       description,
-      ogImage{asset->{_id, url}}
+      ogImage{asset->{_id, url}},
+      favicon{asset->{_id, url}}
     }
   }
 `)

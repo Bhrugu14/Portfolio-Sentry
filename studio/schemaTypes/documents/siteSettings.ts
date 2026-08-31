@@ -101,6 +101,13 @@ export const siteSettings = defineType({
           title: 'Social Share Image',
           options: { hotspot: true },
         }),
+        defineField({
+          name: 'favicon',
+          type: 'image',
+          title: 'Favicon / Site Icon',
+          description:
+            'Small square logo shown in browser tabs, bookmarks, and mobile home-screen shortcuts. Leave empty to use the site\'s default icon.',
+        }),
       ],
     }),
   ],
