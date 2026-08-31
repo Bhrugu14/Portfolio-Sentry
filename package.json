@@ -1,6 +1,7 @@
 {
   "name": "portfolio-sentry",
   "private": true,
+  "license": "MIT",
   "scripts": {
     "dev": "concurrently -n studio,web -c blue,green \"npm run dev --prefix studio\" \"npm run dev --prefix web\"",
     "typegen": "npm run typegen --prefix studio",

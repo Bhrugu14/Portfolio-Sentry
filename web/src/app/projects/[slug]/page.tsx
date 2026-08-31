@@ -18,7 +18,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   if (!project) return notFound()
 
   return (
-    <main className="mx-auto max-w-3xl px-6 py-16">
+    <main id="main-content" className="mx-auto max-w-3xl px-6 py-16">
       <Link href="/#projects" className="text-sm text-muted hover:text-accent">
         &larr; Back to projects
       </Link>

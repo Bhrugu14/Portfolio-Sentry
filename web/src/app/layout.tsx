@@ -23,6 +23,10 @@ export async function generateMetadata(): Promise<Metadata> {
   const ogImage = settings?.seo?.ogImage ? urlFor(settings.seo.ogImage).width(1200).height(630).url() : undefined
 
   return {
+    // Only set when configured — an unset metadataBase just means Next
+    // can't resolve relative URLs into absolute ones, which this project
+    // avoids elsewhere anyway (ogImage above is already absolute).
+    metadataBase: env.siteUrl ? new URL(env.siteUrl) : undefined,
     title,
     description,
     openGraph: {
@@ -77,6 +81,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang="en" suppressHydrationWarning className={htmlClassName}>
       <head>{themeCss && <style dangerouslySetInnerHTML={{ __html: themeCss }} />}</head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <a
+          href="#main-content"
+          className="sr-only rounded-full bg-accent px-4 py-2 text-sm font-medium text-accent-foreground focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50"
+        >
+          Skip to content
+        </a>
         {cursorGlowEnabled && <CursorGlow />}
         <ThemeProvider>{children}</ThemeProvider>
         <SanityLive />

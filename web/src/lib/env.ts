@@ -27,4 +27,5 @@ export const env = {
   contactEmailTo: process.env.CONTACT_EMAIL_TO, // contact email notification
   umamiWebsiteId: process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID, // analytics (self-hosted Umami)
   umamiScriptUrl: process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL, // analytics (self-hosted Umami)
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL, // canonical URL for sitemap.xml/robots.txt/OG tags
 }

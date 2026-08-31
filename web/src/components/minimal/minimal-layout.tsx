@@ -12,7 +12,7 @@ export function MinimalLayout({ settings, visibility, projects, experience }: Ho
   return (
     <>
       <Nav visibility={visibility} name={settings.name} />
-      <main>
+      <main id="main-content">
         <Hero settings={settings} />
         <About settings={settings} />
         <Skills settings={settings} />

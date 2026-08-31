@@ -43,6 +43,7 @@ All environment variables are read through one module, [`src/lib/env.ts`](src/li
 | `CONTACT_EMAIL_TO` | Optional | Address the contact form notification is sent to | Your own inbox address |
 | `NEXT_PUBLIC_UMAMI_WEBSITE_ID` | Optional | Self-hosted analytics (visits, clicks, geography) | Your own Umami instance — see [Analytics](#analytics-optional) below |
 | `NEXT_PUBLIC_UMAMI_SCRIPT_URL` | Optional | Same as above — must be set together with it | Same as above |
+| `NEXT_PUBLIC_SITE_URL` | Optional | `sitemap.xml`/`robots.txt`/social share links | Your deployed URL, e.g. `https://yourname.com` or the `.vercel.app` one Vercel gives you |
 
 **Every optional variable enables its feature only when set.** Leave any of them blank and the app runs fine with that feature quietly turned off — no code changes needed:
 - No `NEXT_PUBLIC_UMAMI_WEBSITE_ID`/`NEXT_PUBLIC_UMAMI_SCRIPT_URL` (either one missing counts as "not set") → no analytics script is loaded, no tracking attributes do anything, nothing breaks.
@@ -50,6 +51,7 @@ All environment variables are read through one module, [`src/lib/env.ts`](src/li
 - No `SANITY_API_READ_TOKEN` → published content still renders; drafts/preview are skipped.
 - No `SANITY_API_WRITE_TOKEN` → contact-form persistence to Sanity is skipped (not attempted — it would only fail without a token). If `RESEND_API_KEY`/`CONTACT_EMAIL_TO` are set, the form still works via email only.
 - **Neither `SANITY_API_WRITE_TOKEN` nor a full `RESEND_API_KEY`+`CONTACT_EMAIL_TO` pair** → the contact form has no way to actually deliver a message. It tells visitors so ("This form is not fully set up yet") instead of pretending to succeed — set up at least one of the two before relying on it.
+- No `NEXT_PUBLIC_SITE_URL` → `/sitemap.xml` serves an empty (still valid) sitemap and `/robots.txt` omits its sitemap reference, rather than pointing search engines at the wrong domain. Set it once you have a real URL to deploy to.
 
 The two required variables fail the app fast with a clear error (both at `next dev`/`next build` and inside Docker) if left unset — see `src/lib/env.ts`.
 

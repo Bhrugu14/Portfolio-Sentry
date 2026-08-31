@@ -12,10 +12,15 @@ git clone <this-repo-url>
 cd Portfolio-Sentry
 npm install --prefix web
 npm install --prefix studio
-cp web/.env.local.example web/.env.local   # fill in your own values — see web/README.md
-npm run dev                                 # runs the Studio and the site together
+cp web/.env.local.example web/.env.local       # fill in your own values — see web/README.md
+cp studio/.env.local.example studio/.env.local # same project ID/dataset as above
+npm run dev                                    # runs the Studio and the site together
 ```
 
 This starts the Studio at [http://localhost:3333](http://localhost:3333) and the site at [http://localhost:3000](http://localhost:3000). `npm run dev` at the root is a convenience wrapper (see [package.json](package.json)) — each project also runs independently with its own `npm run dev` from inside `web/` or `studio/`.
 
 For everything else — environment variables, Docker, testing, deploying — see [web/README.md](web/README.md).
+
+## License
+
+[MIT](LICENSE) — free to clone, modify, and deploy as your own portfolio.

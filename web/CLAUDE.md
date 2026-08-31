@@ -142,3 +142,10 @@ it's ever edited.
 - `npm audit` in `web/` currently reports vulnerabilities transitively via
   `@sanity/cli-build`/`@sanity/workbench-cli` (old `uuid`). Fixing requires
   a breaking `next-sanity` major version bump — deliberate, not urgent.
+- Any 404 (including the custom `not-found.tsx`) logs a benign dev-only
+  console error in `next dev` + Turbopack: "Encountered a script tag while
+  rendering React component...". Confirmed pre-existing and unrelated to
+  this repo's code — it reproduces identically with Next's own default
+  404 page (tested by temporarily removing `not-found.tsx`). Doesn't
+  affect production builds or actual behavior; just noisy dev console
+  output on any 404.
