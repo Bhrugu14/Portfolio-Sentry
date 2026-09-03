@@ -1,6 +1,7 @@
 // studio/schemaTypes/objects/skillCategory.ts
 import { defineArrayMember, defineField, defineType } from 'sanity'
 import { TagIcon } from '@sanity/icons/Tag'
+import { BulkAddSkillsInput } from '../../src/components/BulkAddSkillsInput'
 
 export const skillCategory = defineType({
   name: 'skillCategory',
@@ -20,6 +21,7 @@ export const skillCategory = defineType({
       title: 'Skills',
       type: 'array',
       of: [defineArrayMember({ type: 'skill' })],
+      components: { input: BulkAddSkillsInput },
       validation: (rule) => rule.min(1).error('Add at least one skill'),
     }),
   ],

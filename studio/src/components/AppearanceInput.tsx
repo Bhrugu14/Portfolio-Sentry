@@ -1,18 +1,29 @@
 // studio/src/components/AppearanceInput.tsx
 import { useCallback, type ChangeEvent } from 'react'
-import { Button, Card, Flex, Stack, Switch, Text, TextInput } from '@sanity/ui'
+import { Button, Card, Flex, Select, Stack, Switch, Text, TextInput } from '@sanity/ui'
 import { set, type ObjectInputProps } from 'sanity'
 import { contrastRatio } from '../lib/contrast'
 
 type ThemeKey = 'minimal' | 'professional'
 type ThemeColorField = 'background' | 'text' | 'accent'
 type ThemeColors = { background?: string; text?: string; accent?: string }
+type BackgroundEffect = 'none' | 'particles' | 'ripple' | 'orbs' | 'aurora' | 'dust'
 type AppearanceValue = {
   activeTheme?: ThemeKey
   minimal?: ThemeColors
   professional?: ThemeColors
   cursorGlowEnabled?: boolean
+  backgroundEffect?: BackgroundEffect
 }
+
+const BACKGROUND_EFFECTS: { value: BackgroundEffect; title: string }[] = [
+  { value: 'none', title: 'None' },
+  { value: 'particles', title: 'Particle Network (interactive)' },
+  { value: 'ripple', title: 'Ripple Grid (interactive)' },
+  { value: 'orbs', title: 'Magnetic Orbs (interactive)' },
+  { value: 'aurora', title: 'Aurora Drift (ambient)' },
+  { value: 'dust', title: 'Floating Dust (ambient)' },
+]
 
 const THEMES: { key: ThemeKey; title: string; headingFont: string }[] = [
   { key: 'minimal', title: 'Minimal', headingFont: 'system-ui, sans-serif' },
@@ -80,6 +91,14 @@ export function AppearanceInput(props: ObjectInputProps) {
     [props],
   )
 
+  const backgroundEffect = value.backgroundEffect ?? 'none'
+  const handleBackgroundEffectChange = useCallback(
+    (event: ChangeEvent<HTMLSelectElement>) => {
+      props.onChange(set(event.target.value as BackgroundEffect, ['backgroundEffect']))
+    },
+    [props],
+  )
+
   return (
     <Stack gap={4}>
       <Card padding={3} radius={2} border>
@@ -108,6 +127,25 @@ export function AppearanceInput(props: ObjectInputProps) {
           </Stack>
           <Switch checked={cursorGlowEnabled} onChange={handleCursorGlowChange} />
         </Flex>
+      </Card>
+
+      <Card padding={3} radius={2} border>
+        <Stack gap={3}>
+          <Stack gap={2}>
+            <Text weight="semibold">Background effect</Text>
+            <Text size={1} muted>
+              A decorative full-page background animation, colored from the theme colors below. Applies to both
+              themes. Skipped automatically for visitors who prefer reduced motion.
+            </Text>
+          </Stack>
+          <Select value={backgroundEffect} onChange={handleBackgroundEffectChange} style={{ maxWidth: 280 }}>
+            {BACKGROUND_EFFECTS.map((effect) => (
+              <option key={effect.value} value={effect.value}>
+                {effect.title}
+              </option>
+            ))}
+          </Select>
+        </Stack>
       </Card>
 
       {THEMES.map((theme) => {

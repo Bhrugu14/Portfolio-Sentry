@@ -4,6 +4,7 @@ import { PortableText } from 'next-sanity'
 import { sanityFetch } from '@/sanity/live'
 import { PROJECT_BY_SLUG_QUERY, PROJECT_SLUGS_QUERY } from '@/sanity/queries'
 import { SanityImage } from '@/components/ui/sanity-image'
+import { getVisibilityBadge } from '@/lib/project-links'
 import { client } from '@/sanity/client'
 
 export async function generateStaticParams() {
@@ -17,6 +18,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
 
   if (!project) return notFound()
 
+  const visibilityBadge = getVisibilityBadge(project.visibility)
+
   return (
     <main id="main-content" className="mx-auto max-w-3xl px-6 py-16">
       <Link href="/#projects" className="text-sm text-muted hover:text-accent">
@@ -26,13 +29,21 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       <SanityImage
         value={project.coverImage}
         width={900}
-        height={540}
+        fit="max"
         priority
-        className="mt-6 w-full rounded-lg border border-border object-cover"
+        className="mt-6 w-full rounded-lg border border-border"
       />
-      {project.techStack && project.techStack.length > 0 && (
+      {((project.techStack && project.techStack.length > 0) || visibilityBadge) && (
         <ul className="mt-6 flex flex-wrap gap-1.5">
-          {project.techStack.map((tech) => (
+          {visibilityBadge && (
+            <li
+              title={visibilityBadge.title}
+              className="whitespace-nowrap rounded-full border border-accent/40 px-2 py-0.5 text-xs text-accent"
+            >
+              {visibilityBadge.label}
+            </li>
+          )}
+          {project.techStack?.map((tech) => (
             <li key={tech} className="rounded-full border border-border px-2 py-0.5 text-xs text-muted">
               {tech}
             </li>

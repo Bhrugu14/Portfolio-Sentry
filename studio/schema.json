@@ -924,6 +924,27 @@
         },
         "optional": true
       },
+      "visibility": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "union",
+          "of": [
+            {
+              "type": "string",
+              "value": "public"
+            },
+            {
+              "type": "string",
+              "value": "company"
+            },
+            {
+              "type": "string",
+              "value": "private"
+            }
+          ]
+        },
+        "optional": true
+      },
       "repoUrl": {
         "type": "objectAttribute",
         "value": {
@@ -1555,6 +1576,39 @@
           "type": "objectAttribute",
           "value": {
             "type": "boolean"
+          },
+          "optional": true
+        },
+        "backgroundEffect": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "union",
+            "of": [
+              {
+                "type": "string",
+                "value": "none"
+              },
+              {
+                "type": "string",
+                "value": "particles"
+              },
+              {
+                "type": "string",
+                "value": "ripple"
+              },
+              {
+                "type": "string",
+                "value": "orbs"
+              },
+              {
+                "type": "string",
+                "value": "aurora"
+              },
+              {
+                "type": "string",
+                "value": "dust"
+              }
+            ]
           },
           "optional": true
         }

@@ -71,6 +71,22 @@ export const project = defineType({
       options: { layout: 'tags' },
     }),
     defineField({
+      name: 'visibility',
+      title: 'Visibility',
+      description:
+        'Public: open-source, links shown as provided. Company / Client: built for an employer/client — shown with a badge explaining why there’s no repo link. Private: personal project you’re keeping closed-source.',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Public (open source)', value: 'public' },
+          { title: 'Company / Client project', value: 'company' },
+          { title: 'Private project', value: 'private' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'public',
+    }),
+    defineField({
       name: 'repoUrl',
       title: 'Repository URL',
       type: 'url',

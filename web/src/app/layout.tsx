@@ -9,6 +9,7 @@ import { SanityLive, sanityFetch } from '@/sanity/live'
 import { SITE_SETTINGS_QUERY } from '@/sanity/queries'
 import { urlFor } from '@/sanity/image'
 import { CursorGlow } from '@/components/ui/cursor-glow'
+import { BackgroundEffect } from '@/components/ui/background-effect'
 import { SectionViewTracker } from '@/components/analytics/section-view-tracker'
 import './globals.css'
 
@@ -83,15 +84,21 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const cursorGlowEnabled = appearance?.cursorGlowEnabled !== false
 
   return (
-    <html lang="en" suppressHydrationWarning className={htmlClassName}>
+    <html lang="en" suppressHydrationWarning>
       <head>{themeCss && <style dangerouslySetInnerHTML={{ __html: themeCss }} />}</head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      {/* theme-{name} lives on body, not html: html's class attribute is owned by
+          next-themes (attribute="class", for .dark) — putting both on the same
+          element meant a Sanity live re-render of this className overwrote the
+          dark class next-themes had set outside React's tracking, silently
+          reverting to light mode until the toggle was clicked twice. */}
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased ${htmlClassName}`}>
         <a
           href="#main-content"
           className="sr-only rounded-full bg-accent px-4 py-2 text-sm font-medium text-accent-foreground focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50"
         >
           Skip to content
         </a>
+        <BackgroundEffect kind={appearance?.backgroundEffect} />
         {cursorGlowEnabled && <CursorGlow />}
         <ThemeProvider>{children}</ThemeProvider>
         <SanityLive />

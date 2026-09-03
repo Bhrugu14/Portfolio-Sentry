@@ -3,11 +3,12 @@
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { SanityImage } from '@/components/ui/sanity-image'
-import { getProjectPrimaryLink } from '@/lib/project-links'
+import { getProjectPrimaryLink, getVisibilityBadge } from '@/lib/project-links'
 import type { PROJECTS_QUERY_RESULT } from '../../../sanity.types'
 
 export function ProjectCard({ project, index = 0 }: { project: PROJECTS_QUERY_RESULT[number]; index?: number }) {
   const { href: primaryHref, isExternal } = getProjectPrimaryLink(project)
+  const visibilityBadge = getVisibilityBadge(project.visibility)
 
   const content = (
     <>
@@ -24,9 +25,17 @@ export function ProjectCard({ project, index = 0 }: { project: PROJECTS_QUERY_RE
         )}
       </div>
       <p className="mt-2 text-sm text-muted">{project.summary}</p>
-      {project.techStack && project.techStack.length > 0 && (
+      {((project.techStack && project.techStack.length > 0) || visibilityBadge) && (
         <ul className="mt-3 flex flex-wrap gap-1.5">
-          {project.techStack.map((tech) => (
+          {visibilityBadge && (
+            <li
+              title={visibilityBadge.title}
+              className="whitespace-nowrap rounded-full border border-accent/40 px-2 py-0.5 text-xs text-accent"
+            >
+              {visibilityBadge.label}
+            </li>
+          )}
+          {project.techStack?.map((tech) => (
             <li key={tech} className="rounded-full border border-border px-2 py-0.5 text-xs text-muted">
               {tech}
             </li>

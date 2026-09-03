@@ -40,5 +40,23 @@ export const appearance = defineType({
       type: 'boolean',
       initialValue: true,
     }),
+    defineField({
+      name: 'backgroundEffect',
+      title: 'Background Effect',
+      description:
+        'A decorative full-page background animation, colored from the theme\'s own colors above. Applies to both themes. Off by default; skipped automatically for visitors who prefer reduced motion.',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'None', value: 'none' },
+          { title: 'Particle Network (interactive)', value: 'particles' },
+          { title: 'Ripple Grid (interactive)', value: 'ripple' },
+          { title: 'Magnetic Orbs (interactive)', value: 'orbs' },
+          { title: 'Aurora Drift (ambient)', value: 'aurora' },
+          { title: 'Floating Dust (ambient)', value: 'dust' },
+        ],
+      },
+      initialValue: 'none',
+    }),
   ],
 })

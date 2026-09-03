@@ -1,4 +1,6 @@
 import { ThemeToggle } from '@/components/ui/theme-toggle'
+import { SocialLinks } from '@/components/ui/social-links'
+import type { SITE_SETTINGS_QUERY_RESULT } from '../../sanity.types'
 
 export interface SectionVisibility {
   about: boolean
@@ -22,12 +24,20 @@ const LINKS: { key: keyof SectionVisibility | 'contact'; href: string; label: st
   { key: 'contact', href: '#contact', label: 'Contact' },
 ]
 
-export function Nav({ visibility, name }: { visibility: SectionVisibility; name?: string | null }) {
+export function Nav({
+  visibility,
+  name,
+  socialLinks,
+}: {
+  visibility: SectionVisibility
+  name?: string | null
+  socialLinks?: NonNullable<SITE_SETTINGS_QUERY_RESULT>['socialLinks']
+}) {
   const links = getVisibleLinks(LINKS, visibility)
 
   return (
     <header className="sticky top-0 z-10 border-b border-border bg-background/80 backdrop-blur">
-      <nav className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
+      <nav className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-6 py-4">
         <a href="#home" className="text-sm font-semibold">
           {name || 'Portfolio'}
         </a>
@@ -43,7 +53,12 @@ export function Nav({ visibility, name }: { visibility: SectionVisibility; name?
             </li>
           ))}
         </ul>
-        <ThemeToggle />
+        <div className="flex items-center gap-4">
+          {socialLinks && socialLinks.length > 0 && (
+            <SocialLinks links={socialLinks} className="hidden gap-4 text-sm sm:flex" />
+          )}
+          <ThemeToggle />
+        </div>
       </nav>
     </header>
   )

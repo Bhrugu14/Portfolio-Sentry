@@ -11,14 +11,14 @@ import type { HomeLayoutProps } from '@/lib/theme'
 export function MinimalLayout({ settings, visibility, projects, experience }: HomeLayoutProps) {
   return (
     <>
-      <Nav visibility={visibility} name={settings.name} />
+      <Nav visibility={visibility} name={settings.name} socialLinks={settings.socialLinks} />
       <main id="main-content">
         <Hero settings={settings} />
         <About settings={settings} />
         <Skills settings={settings} />
         <Projects projects={projects} theme="minimal" />
         <Experience items={experience} />
-        <Contact settings={settings} />
+        <Contact settings={settings} showSocialLinks={false} />
       </main>
       <Footer name={settings.name} />
     </>

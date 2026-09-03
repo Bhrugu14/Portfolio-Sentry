@@ -28,7 +28,8 @@ export const SITE_SETTINGS_QUERY = defineQuery(`
       activeTheme,
       minimal{background, text, accent},
       professional{background, text, accent},
-      cursorGlowEnabled
+      cursorGlowEnabled,
+      backgroundEffect
     },
     seo{
       title,
@@ -55,6 +56,7 @@ export const PROJECTS_QUERY = defineQuery(`
     repoUrl,
     liveUrl,
     featured,
+    visibility,
     "hasCaseStudy": defined(body) && length(body) > 0
   }
 `)
@@ -81,7 +83,8 @@ export const PROJECT_BY_SLUG_QUERY = defineQuery(`
     body,
     techStack,
     repoUrl,
-    liveUrl
+    liveUrl,
+    visibility
   }
 `)
 
