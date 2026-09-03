@@ -67,8 +67,11 @@ function isCompletePicks(colors: Partial<Record<keyof ThemeColorPicks, string | 
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   // Analytics is fully optional — unset either var and it's silently skipped,
-  // never breaking the page. See README.md's "Analytics" section.
-  const analyticsEnabled = Boolean(env.umamiWebsiteId && env.umamiScriptUrl)
+  // never breaking the page. See README.md's "Analytics" section. Also
+  // skipped outside production so `npm run dev` (and local builds you just
+  // `next start`) never registers real events — the script never loads, so
+  // there's nothing for trackEvent()'s window.umami check to find.
+  const analyticsEnabled = Boolean(env.umamiWebsiteId && env.umamiScriptUrl) && process.env.NODE_ENV === 'production'
   const { data: settings } = await sanityFetch({ query: SITE_SETTINGS_QUERY, stega: false })
 
   const appearance = settings?.appearance
