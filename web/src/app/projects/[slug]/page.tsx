@@ -58,6 +58,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
             rel="noopener noreferrer"
             data-umami-event="project_link_click"
             data-umami-event-project={project.title}
+            data-umami-event-link-type="live"
             className="text-accent hover:underline"
           >
             Live site &rarr;
@@ -70,6 +71,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
             rel="noopener noreferrer"
             data-umami-event="project_link_click"
             data-umami-event-project={project.title}
+            data-umami-event-link-type="repo"
             className="text-accent hover:underline"
           >
             Repository &rarr;

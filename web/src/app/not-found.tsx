@@ -1,9 +1,20 @@
+'use client'
+
+import { useEffect } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { trackEvent } from '@/lib/umami'
 
 // Replaces Next.js's generic default 404 with one styled the same as the
 // rest of the site (uses the same CSS custom properties every theme
 // defines, so it automatically matches whichever theme is active).
 export default function NotFound() {
+  const pathname = usePathname()
+
+  useEffect(() => {
+    trackEvent('404', { path: pathname })
+  }, [pathname])
+
   return (
     <main id="main-content" className="mx-auto flex min-h-[70vh] max-w-xl flex-col items-center justify-center gap-4 px-6 text-center">
       <p className="text-sm font-medium uppercase tracking-widest text-accent">404</p>

@@ -7,7 +7,7 @@ import { getProjectPrimaryLink, getVisibilityBadge } from '@/lib/project-links'
 import type { PROJECTS_QUERY_RESULT } from '../../../sanity.types'
 
 export function ProjectCard({ project, index = 0 }: { project: PROJECTS_QUERY_RESULT[number]; index?: number }) {
-  const { href: primaryHref, isExternal } = getProjectPrimaryLink(project)
+  const { href: primaryHref, isExternal, linkType } = getProjectPrimaryLink(project)
   const visibilityBadge = getVisibilityBadge(project.visibility)
 
   const content = (
@@ -62,6 +62,7 @@ export function ProjectCard({ project, index = 0 }: { project: PROJECTS_QUERY_RE
           rel="noopener noreferrer"
           data-umami-event="project_link_click"
           data-umami-event-project={project.title}
+          data-umami-event-link-type={linkType}
           className={className}
         >
           {content}

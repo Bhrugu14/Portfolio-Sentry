@@ -8,7 +8,7 @@ import type { PROJECTS_QUERY_RESULT } from '../../../sanity.types'
 
 /** A larger "spotlight" treatment for one project, used only by the Professional theme's Projects section. */
 export function FeaturedProjectCard({ project }: { project: PROJECTS_QUERY_RESULT[number] }) {
-  const { href: primaryHref, isExternal } = getProjectPrimaryLink(project)
+  const { href: primaryHref, isExternal, linkType } = getProjectPrimaryLink(project)
   const visibilityBadge = getVisibilityBadge(project.visibility)
 
   const content = (
@@ -55,6 +55,7 @@ export function FeaturedProjectCard({ project }: { project: PROJECTS_QUERY_RESUL
           rel="noopener noreferrer"
           data-umami-event="project_link_click"
           data-umami-event-project={project.title}
+          data-umami-event-link-type={linkType}
           className={className}
         >
           {content}

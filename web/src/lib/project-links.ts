@@ -15,10 +15,16 @@ export function getVisibilityBadge(visibility?: string | null) {
   return (visibility && VISIBILITY_BADGES[visibility]) || null
 }
 
-/** Where a project card/spotlight should link, and whether that's an external link (new tab) or an internal case-study route. */
-export function getProjectPrimaryLink(project: ProjectLinkFields): { href: string; isExternal: boolean } {
+export type ProjectLinkType = 'case-study' | 'live' | 'repo' | 'none'
+
+/** Where a project card/spotlight should link, whether that's an external link (new tab) or an
+ * internal case-study route, and which kind of link it resolved to — so click tracking can tell
+ * "went to the live site" apart from "went to the repo", not just which project was clicked. */
+export function getProjectPrimaryLink(project: ProjectLinkFields): { href: string; isExternal: boolean; linkType: ProjectLinkType } {
   if (project.hasCaseStudy && project.slug) {
-    return { href: `/projects/${project.slug}`, isExternal: false }
+    return { href: `/projects/${project.slug}`, isExternal: false, linkType: 'case-study' }
   }
-  return { href: project.liveUrl || project.repoUrl || '#', isExternal: true }
+  if (project.liveUrl) return { href: project.liveUrl, isExternal: true, linkType: 'live' }
+  if (project.repoUrl) return { href: project.repoUrl, isExternal: true, linkType: 'repo' }
+  return { href: '#', isExternal: true, linkType: 'none' }
 }
